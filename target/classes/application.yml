@@ -1,11 +1,10 @@
-server:
-  port: 8082
 spring:
-  # MYSQL Config
   datasource:
     url: jdbc:mysql://localhost:3306/centraltechv
     username: admin
     password: 123
-  # JPA Config
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
+    hibernate:
+      ddl-auto: update
     show-sql: true

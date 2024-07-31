@@ -1,16 +1,16 @@
-package com.techV.TechV.entity;
+package com.techv.vitor.entity;
 
-import com.techV.TechV.entity.enums.Admin;
+import com.techv.vitor.entity.enums.Admin;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 @Entity
 @Table(name = "USERS")
-public class Usuario {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,14 +23,19 @@ public class Usuario {
     private String password;
     private Admin admin;
 
-//    @OneToMany
-//    private List<Ticket> tickets;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @OneToMany(mappedBy = "users")
+    private List<Ticket> tickets;
 
-    public Usuario() {
+    public User() {
 
     }
 
-    public Usuario(Long id, String username, String email, String password, Admin admin) {
+    public User(Long id,
+                String username,
+                String email,
+                String password,
+                Admin admin) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -77,4 +82,5 @@ public class Usuario {
     public void setAdmin(Admin admin) {
         this.admin = admin;
     }
+
 }

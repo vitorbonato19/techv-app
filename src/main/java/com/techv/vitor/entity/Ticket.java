@@ -1,15 +1,27 @@
-package com.techV.TechV.entity;
+package com.techv.vitor.entity;
 
-import com.techV.TechV.entity.enums.TypeTicket;
+import com.techv.vitor.entity.enums.TypeTicket;
+import jakarta.annotation.Nonnull;
+import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "TICKETS")
 public class Ticket {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Usuario requester;
-    private Usuario analyst;
+    @Nonnull
+    private User requester;
+    @Nonnull
+    private User analyst;
+    @Column(columnDefinition = "TEXT")
     private String text;
+    @Column(columnDefinition = "TEXT")
     private String reply;
     private TypeTicket typeTicket;
     private LocalDateTime createdAt;
@@ -17,11 +29,15 @@ public class Ticket {
     private Boolean open;
     private Boolean finished;
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @ManyToOne
+    private User users;
+
     public Ticket() {
 
     }
 
-    public Ticket(Long id, Usuario requester, Usuario analyst, String text, String reply, TypeTicket typeTicket, LocalDateTime finishedAt, LocalDateTime createdAt, Boolean open, Boolean finished) {
+    public Ticket(Long id, User requester, User analyst, String text, String reply, TypeTicket typeTicket, LocalDateTime finishedAt, LocalDateTime createdAt, Boolean open, Boolean finished) {
         this.id = id;
         this.requester = requester;
         this.analyst = analyst;
@@ -68,49 +84,5 @@ public class Ticket {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Usuario getRequester() {
-        return requester;
-    }
-
-    public void setRequester(Usuario requester) {
-        this.requester = requester;
-    }
-
-    public Usuario getAnalyst() {
-        return analyst;
-    }
-
-    public void setAnalyst(Usuario analyst) {
-        this.analyst = analyst;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Boolean getOpen() {
-        return open;
-    }
-
-    public void setOpen(Boolean open) {
-        this.open = open;
-    }
-
-    public Boolean getFinished() {
-        return finished;
-    }
-
-    public void setFinished(Boolean finished) {
-        this.finished = finished;
     }
 }
