@@ -1,0 +1,16 @@
+version: '3.1'
+
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'CENTRALTECHV'
+      MYSQL_USER: ADMIN
+      MYSQL_PASSWORD : ADMIN
+      MYSQL_ROOT_PASSWORD: 123
+      ports:
+        '3306:3306'
+      expose:
+        '3306'
+

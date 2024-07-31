@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @Entity
-@Table(name = "users")
+@Table(name = "USERS")
 public class Usuario {
 
     @Id
@@ -23,8 +23,8 @@ public class Usuario {
     private String password;
     private Admin admin;
 
-    @OneToMany
-    private List<Ticket> tickets;
+//    @OneToMany
+//    private List<Ticket> tickets;
 
     public Usuario() {
 
