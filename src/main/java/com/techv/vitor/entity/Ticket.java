@@ -9,16 +9,16 @@ import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "TICKETS")
+@Table(name = "TB_TICKETS")
 public class Ticket {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Nonnull
-    private User requester;
+    private String requester;
     @Nonnull
-    private User analyst;
+    private String analyst;
     @Column(columnDefinition = "TEXT")
     private String text;
     @Column(columnDefinition = "TEXT")
@@ -29,7 +29,6 @@ public class Ticket {
     private Boolean open;
     private Boolean finished;
 
-    @JdbcTypeCode(SqlTypes.JSON)
     @ManyToOne
     private User users;
 
@@ -37,7 +36,7 @@ public class Ticket {
 
     }
 
-    public Ticket(Long id, User requester, User analyst, String text, String reply, TypeTicket typeTicket, LocalDateTime finishedAt, LocalDateTime createdAt, Boolean open, Boolean finished) {
+    public Ticket(Long id, String requester, String analyst, String text, String reply, TypeTicket typeTicket, LocalDateTime finishedAt, LocalDateTime createdAt, Boolean open, Boolean finished) {
         this.id = id;
         this.requester = requester;
         this.analyst = analyst;

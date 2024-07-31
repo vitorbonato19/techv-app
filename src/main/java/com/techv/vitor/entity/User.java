@@ -6,10 +6,11 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "USERS")
+@Table(name = "TB_USERS")
 public class User {
 
     @Id
@@ -21,9 +22,10 @@ public class User {
     private String email;
     @Nonnull
     private String password;
+    private Integer integrated;
+    private LocalDateTime dataIntegration;
     private Admin admin;
 
-    @JdbcTypeCode(SqlTypes.JSON)
     @OneToMany(mappedBy = "users")
     private List<Ticket> tickets;
 
