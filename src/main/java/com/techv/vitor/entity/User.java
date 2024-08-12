@@ -8,6 +8,7 @@ import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "TB_USERS")
@@ -23,7 +24,7 @@ public class User {
     @Nonnull
     private String password;
     private Integer integrated;
-    private LocalDateTime dataIntegration;
+    private LocalDateTime lastModified;
     private Admin admin;
 
     @OneToMany(mappedBy = "users")

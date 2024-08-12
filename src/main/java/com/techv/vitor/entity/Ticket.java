@@ -3,8 +3,6 @@ package com.techv.vitor.entity;
 import com.techv.vitor.entity.enums.TypeTicket;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 
@@ -26,7 +24,6 @@ public class Ticket {
     private TypeTicket typeTicket;
     private LocalDateTime createdAt;
     private LocalDateTime finishedAt;
-    private Boolean open;
     private Boolean finished;
 
     @ManyToOne
@@ -36,7 +33,16 @@ public class Ticket {
 
     }
 
-    public Ticket(Long id, String requester, String analyst, String text, String reply, TypeTicket typeTicket, LocalDateTime finishedAt, LocalDateTime createdAt, Boolean open, Boolean finished) {
+    public Ticket(Long id,
+                  String requester,
+                  String analyst,
+                  String text,
+                  String reply,
+                  TypeTicket typeTicket,
+                  LocalDateTime finishedAt,
+                  LocalDateTime createdAt,
+                  Boolean open,
+                  Boolean finished) {
         this.id = id;
         this.requester = requester;
         this.analyst = analyst;
@@ -45,7 +51,6 @@ public class Ticket {
         this.typeTicket = typeTicket;
         this.finishedAt = finishedAt;
         this.createdAt = createdAt;
-        this.open = open;
         this.finished = finished;
     }
 
