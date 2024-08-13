@@ -1,0 +1,1 @@
+insert into tb_users (admin,email,integrated,last_modified,password,username,id) values (1,'admin',1,now(),'admin','admin',default)

@@ -1,10 +1,13 @@
 package com.techv.vitor.controller;
 
+import com.techv.vitor.controller.dto.UserRequestDto;
+import com.techv.vitor.controller.dto.UserResponseDto;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.service.UserService;
-import org.apache.coyote.Response;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,13 +29,20 @@ public class UserController {
     }
 
     @GetMapping
+    @RequestMapping(value = "/api/v1/users/{id}")
     public ResponseEntity<Optional<User>> findById(@PathVariable Long id) {
         var clients = userService.findById(id);
         return ResponseEntity.ok().body(clients);
     }
 
     @PostMapping
-    public ResponseEntity<User> insertUsers(@RequestBody UserDTO userDto) {
-        
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<UserResponseDto> insertUsers(@RequestBody UserRequestDto requestDto) {
+
+        UserResponseDto response = userService.insertUsers(requestDto);
+        return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.getId())
+                .toUri()).body(response);
     }
 }

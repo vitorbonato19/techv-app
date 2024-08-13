@@ -15,21 +15,23 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/tickets")
-public class TicketController {
+public class TicketsController {
 
     private final TicketRepository ticketRepository;
 
-    public TicketController(TicketRepository ticketRepository) {
+    public TicketsController(TicketRepository ticketRepository) {
         this.ticketRepository = ticketRepository;
     }
 
     @GetMapping
+    @RequestMapping(value = "/api/v1/tickets")
     public ResponseEntity<List<Ticket>> findAll() {
         var tickets = ticketRepository.findAll();
         return ResponseEntity.ok().body(tickets);
     }
 
     @GetMapping
+    @RequestMapping(value = "/api/v1/tickets/{id}")
     public ResponseEntity<Optional<Ticket>> findById(@PathVariable Long id) {
         var ticketsById = ticketRepository.findById(id);
         return ResponseEntity.ok().body(ticketsById);

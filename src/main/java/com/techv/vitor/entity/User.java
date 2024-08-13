@@ -23,7 +23,7 @@ public class User {
     private String email;
     @Nonnull
     private String password;
-    private Integer integrated;
+    private Boolean integrated;
     private LocalDateTime lastModified;
     private Admin admin;
 
@@ -34,16 +34,39 @@ public class User {
 
     }
 
-    public User(Long id,
-                String username,
-                String email,
-                String password,
-                Admin admin) {
+    public User(Long id, String username, String email, String password, Boolean integrated, LocalDateTime lastModified, Admin admin, List<Ticket> tickets) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
+        this.integrated = integrated;
+        this.lastModified = lastModified;
         this.admin = admin;
+        this.tickets = tickets;
+    }
+
+    public Boolean getIntegrated() {
+        return integrated;
+    }
+
+    public void setIntegrated(Boolean integrated) {
+        this.integrated = integrated;
+    }
+
+    public LocalDateTime getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(LocalDateTime lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    public List<Ticket> getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(List<Ticket> tickets) {
+        this.tickets = tickets;
     }
 
     public Long getId() {
