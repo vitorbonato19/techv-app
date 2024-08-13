@@ -14,4 +14,13 @@ public enum Admin {
     public int getAdminValue() {
         return adminValue;
     }
+
+    public static Admin valueOf(int adminValue) {
+        for(Admin a : Admin.values()) {
+            if (a.getAdminValue() == adminValue) {
+                return a;
+            }
+        }
+        throw new IllegalArgumentException("Please set a valid admin status...");
+    }
 }

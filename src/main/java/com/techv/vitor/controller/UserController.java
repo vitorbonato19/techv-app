@@ -29,7 +29,7 @@ public class UserController {
     }
 
     @GetMapping
-    @RequestMapping(value = "/api/v1/users/{id}")
+    @RequestMapping(value = "/{id}")
     public ResponseEntity<Optional<User>> findById(@PathVariable Long id) {
         var clients = userService.findById(id);
         return ResponseEntity.ok().body(clients);

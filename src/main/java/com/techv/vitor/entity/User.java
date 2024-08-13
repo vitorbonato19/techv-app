@@ -1,6 +1,7 @@
 package com.techv.vitor.entity;
 
 import com.techv.vitor.entity.enums.Admin;
+import com.techv.vitor.entity.enums.Integrated;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -23,9 +24,9 @@ public class User {
     private String email;
     @Nonnull
     private String password;
-    private Boolean integrated;
+    private Integer integrated;
     private LocalDateTime lastModified;
-    private Admin admin;
+    private Integer admin;
 
     @OneToMany(mappedBy = "users")
     private List<Ticket> tickets;
@@ -34,23 +35,24 @@ public class User {
 
     }
 
-    public User(Long id, String username, String email, String password, Boolean integrated, LocalDateTime lastModified, Admin admin, List<Ticket> tickets) {
+    public User(Long id, String username, String email, String password, Integrated integrated, LocalDateTime lastModified, Admin admin) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
-        this.integrated = integrated;
+        setIntegrated(integrated);
         this.lastModified = lastModified;
-        this.admin = admin;
-        this.tickets = tickets;
+        setAdmin(admin);
     }
 
-    public Boolean getIntegrated() {
+    public Integer getIntegrated() {
         return integrated;
     }
 
-    public void setIntegrated(Boolean integrated) {
-        this.integrated = integrated;
+    public void setIntegrated(Integrated integrated) {
+        if(integrated != null) {
+            this.integrated = integrated.getValue();
+        }
     }
 
     public LocalDateTime getLastModified() {
@@ -101,12 +103,14 @@ public class User {
         this.password = password;
     }
 
-    public Admin getAdmin() {
+    public Integer getAdmin() {
         return admin;
     }
 
     public void setAdmin(Admin admin) {
-        this.admin = admin;
+        if (admin != null) {
+            this.admin = admin.getAdminValue();
+        }
     }
 
 }

@@ -4,6 +4,7 @@ import com.techv.vitor.controller.dto.UserRequestDto;
 import com.techv.vitor.controller.dto.UserResponseDto;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.entity.enums.Admin;
+import com.techv.vitor.entity.enums.Integrated;
 import com.techv.vitor.repository.UserRepository;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
@@ -40,8 +41,7 @@ public class UserService {
         user.setPassword(requestDto.getPassword());
         user.setEmail(requestDto.getEmail());
         user.setLastModified(LocalDateTime.now());
-        user.setIntegrated(false);
-        user.setAdmin();
+        user.setIntegrated(Integrated.TRUE);
 
         userRepository.save(user);
 
@@ -56,5 +56,7 @@ public class UserService {
 
         return responseDto;
     }
+
+
 
 }

@@ -15,4 +15,13 @@ public enum TypeTicket {
     public int getTicketValue() {
         return ticketValue;
     }
+
+    public static TypeTicket valueOf(int ticketValue) {
+        for (TypeTicket t : TypeTicket.values()) {
+            if (t.getTicketValue() == ticketValue) {
+                return t;
+            }
+        }
+        throw new IllegalArgumentException("Please set a valid type ticket code...");
+    }
 }
