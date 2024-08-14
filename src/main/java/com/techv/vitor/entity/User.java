@@ -26,6 +26,7 @@ public class User {
     private String password;
     private Integer integrated;
     private LocalDateTime lastModified;
+    @Nonnull
     private Integer admin;
 
     @OneToMany(mappedBy = "users")

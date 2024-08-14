@@ -36,4 +36,6 @@ public class TicketsController {
         var ticketsById = ticketRepository.findById(id);
         return ResponseEntity.ok().body(ticketsById);
     }
+
+
 }

@@ -5,16 +5,15 @@ import com.techv.vitor.controller.dto.UserResponseDto;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.entity.enums.Admin;
 import com.techv.vitor.entity.enums.Integrated;
+import com.techv.vitor.exception.PasswordOrUsernameException;
 import com.techv.vitor.repository.UserRepository;
-import org.springframework.cglib.core.Local;
+import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class UserService {
@@ -33,6 +32,7 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    @Transactional
     public UserResponseDto insertUsers(UserRequestDto requestDto) {
 
         User user = new User();
@@ -42,6 +42,7 @@ public class UserService {
         user.setEmail(requestDto.getEmail());
         user.setLastModified(LocalDateTime.now());
         user.setIntegrated(Integrated.TRUE);
+        user.setAdmin(Admin.ADMIN);
 
         userRepository.save(user);
 
@@ -52,11 +53,19 @@ public class UserService {
         responseDto.setEmail(user.getEmail());
         responseDto.setPassword(user.getPassword());
         responseDto.setLastModified(LocalDateTime.now());
-        responseDto.setIntegrated(false);
+
+        if (responseDto.getPassword() == null) {
+            throw new PasswordOrUsernameException(
+                    "Password can not be null...",
+                    HttpStatus.PRECONDITION_FAILED);
+        } else if (responseDto.getUsername() == null) {
+            throw new PasswordOrUsernameException(
+                    "Username can not be null...",
+                    HttpStatus.PRECONDITION_FAILED);
+        }
 
         return responseDto;
+
     }
-
-
 
 }

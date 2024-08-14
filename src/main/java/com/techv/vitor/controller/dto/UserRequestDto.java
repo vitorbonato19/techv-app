@@ -1,19 +1,33 @@
 package com.techv.vitor.controller.dto;
 
+import com.techv.vitor.entity.enums.Admin;
+import com.techv.vitor.entity.enums.Integrated;
+import jakarta.annotation.Nonnull;
+import org.springframework.stereotype.Component;
+
+@Component
 public class UserRequestDto {
 
+    @Nonnull
     private String username;
+    @Nonnull
     private String email;
+    @Nonnull
     private String password;
+    private Integer integrated;
+    @Nonnull
+    private Integer admin;
 
     public UserRequestDto() {
 
     }
 
-    public UserRequestDto(String username, String email, String password) {
+    public UserRequestDto(String username, String email, String password, Integer integrated, Integer admin) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.integrated = integrated;
+        this.admin = admin;
     }
 
     public String getUsername() {
@@ -38,5 +52,21 @@ public class UserRequestDto {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Integer getIntegrated() {
+        return integrated;
+    }
+
+    public void setIntegrated(Integer integrated) {
+        this.integrated = integrated;
+    }
+
+    public Integer getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Integer admin) {
+        this.admin = admin;
     }
 }

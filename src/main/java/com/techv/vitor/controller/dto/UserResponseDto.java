@@ -1,8 +1,11 @@
 package com.techv.vitor.controller.dto;
 
+import org.springframework.stereotype.Component;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 
+@Component
 public class UserResponseDto {
 
     private Long id;
