@@ -1,5 +1,6 @@
 package com.techv.vitor.entity;
 
+import com.techv.vitor.entity.enums.Finished;
 import com.techv.vitor.entity.enums.TypeTicket;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
@@ -24,7 +25,7 @@ public class Ticket {
     private TypeTicket typeTicket;
     private LocalDateTime createdAt;
     private LocalDateTime finishedAt;
-    private Boolean finished;
+    private Integer finished;
 
     @ManyToOne
     private User users;
@@ -33,25 +34,41 @@ public class Ticket {
 
     }
 
-    public Ticket(Long id,
-                  String requester,
-                  String analyst,
-                  String text,
-                  String reply,
-                  TypeTicket typeTicket,
-                  LocalDateTime finishedAt,
-                  LocalDateTime createdAt,
-                  Boolean open,
-                  Boolean finished) {
+    public Ticket(Long id, String requester, String analyst, String text, String reply, TypeTicket typeTicket, LocalDateTime createdAt, LocalDateTime finishedAt, Finished finished, User users) {
         this.id = id;
         this.requester = requester;
         this.analyst = analyst;
         this.text = text;
         this.reply = reply;
         this.typeTicket = typeTicket;
-        this.finishedAt = finishedAt;
         this.createdAt = createdAt;
-        this.finished = finished;
+        this.finishedAt = finishedAt;
+        setFinished(finished);
+        this.users = users;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getRequester() {
+        return requester;
+    }
+
+    public void setRequester(String requester) {
+        this.requester = requester;
+    }
+
+    public String getAnalyst() {
+        return analyst;
+    }
+
+    public void setAnalyst(String analyst) {
+        this.analyst = analyst;
     }
 
     public String getText() {
@@ -78,6 +95,14 @@ public class Ticket {
         this.typeTicket = typeTicket;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public LocalDateTime getFinishedAt() {
         return finishedAt;
     }
@@ -86,7 +111,21 @@ public class Ticket {
         this.finishedAt = finishedAt;
     }
 
-    public Long getId() {
-        return id;
+    public Integer getFinished() {
+        return finished;
+    }
+
+    public void setFinished(Finished finished) {
+        if (finished != null) {
+            finished.getValue();
+        }
+    }
+
+    public User getUsers() {
+        return users;
+    }
+
+    public void setUsers(User users) {
+        this.users = users;
     }
 }

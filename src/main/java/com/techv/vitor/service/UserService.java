@@ -62,6 +62,11 @@ public class UserService {
             throw new PasswordOrUsernameException(
                     "Username can not be null...",
                     HttpStatus.PRECONDITION_FAILED);
+        } else if (responseDto.getEmail() == null) {
+            throw new PasswordOrUsernameException(
+                    "Email can not be null...",
+                    HttpStatus.PRECONDITION_FAILED
+            );
         }
 
         return responseDto;

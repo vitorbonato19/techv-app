@@ -8,14 +8,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserRequestDto {
 
-    @Nonnull
     private String username;
-    @Nonnull
     private String email;
-    @Nonnull
     private String password;
     private Integer integrated;
-    @Nonnull
     private Integer admin;
 
     public UserRequestDto() {

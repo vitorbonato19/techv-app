@@ -37,7 +37,6 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @ResponseBody
     public ResponseEntity<UserResponseDto> insertUsers(@RequestBody UserRequestDto requestDto) {
         UserResponseDto response = userService.insertUsers(requestDto);
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
