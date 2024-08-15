@@ -5,7 +5,6 @@ import com.techv.vitor.entity.enums.Integrated;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 
-@Component
 public class UserRequestDto {
 
     private String username;

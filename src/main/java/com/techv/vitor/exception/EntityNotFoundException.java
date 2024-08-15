@@ -2,11 +2,11 @@ package com.techv.vitor.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class PasswordOrUsernameException extends RuntimeException {
+public class EntityNotFoundException extends RuntimeException {
 
     private HttpStatus httpStatus;
 
-    public PasswordOrUsernameException(String message) {
+    public EntityNotFoundException(String message) {
         super(message);
     }
 

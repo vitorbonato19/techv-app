@@ -23,7 +23,7 @@ public class Ticket {
     private String text;
     @Column(columnDefinition = "TEXT")
     private String reply;
-    private TypeTicket typeTicket;
+    private Integer typeTicket;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -43,7 +43,7 @@ public class Ticket {
         this.analyst = analyst;
         this.text = text;
         this.reply = reply;
-        this.typeTicket = typeTicket;
+        setTypeTicket(typeTicket);
         this.createdAt = createdAt;
         this.finishedAt = finishedAt;
         setFinished(finished);
@@ -90,12 +90,14 @@ public class Ticket {
         this.reply = reply;
     }
 
-    public TypeTicket getTypeTicket() {
+    public Integer getTypeTicket() {
         return typeTicket;
     }
 
     public void setTypeTicket(TypeTicket typeTicket) {
-        this.typeTicket = typeTicket;
+        if (typeTicket != null) {
+            this.typeTicket = typeTicket.getTicketValue();
+        }
     }
 
     public LocalDateTime getCreatedAt() {
@@ -120,7 +122,7 @@ public class Ticket {
 
     public void setFinished(Finished finished) {
         if (finished != null) {
-            finished.getValue();
+            this.finished = finished.getValue();
         }
     }
 

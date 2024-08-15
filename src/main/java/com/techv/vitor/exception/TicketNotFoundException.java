@@ -2,11 +2,11 @@ package com.techv.vitor.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class PasswordOrUsernameException extends RuntimeException {
+public class TicketNotFoundException extends RuntimeException {
 
     private HttpStatus httpStatus;
 
-    public PasswordOrUsernameException(String message) {
+    public TicketNotFoundException(String message) {
         super(message);
     }
 

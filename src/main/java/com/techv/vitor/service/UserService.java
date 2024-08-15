@@ -5,6 +5,7 @@ import com.techv.vitor.controller.dto.UserResponseDto;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.entity.enums.Admin;
 import com.techv.vitor.entity.enums.Integrated;
+import com.techv.vitor.exception.EntityNotFoundException;
 import com.techv.vitor.exception.PasswordOrUsernameException;
 import com.techv.vitor.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -32,7 +33,7 @@ public class UserService {
     public User findById(Long id) {
         Optional<User> user = userRepository.findById(id);
         return user.orElseThrow(
-                () -> new RuntimeException("User not found...")
+                () -> new EntityNotFoundException("User not found...Verify the id:  " + id)
         );
     }
 
@@ -61,16 +62,13 @@ public class UserService {
 
         if (responseDto.getPassword() == null) {
             throw new PasswordOrUsernameException(
-                    "Password can not be null...",
-                    HttpStatus.PRECONDITION_FAILED);
+                    "Password can not be null...");
         } else if (responseDto.getUsername() == null) {
             throw new PasswordOrUsernameException(
-                    "Username can not be null...",
-                    HttpStatus.PRECONDITION_FAILED);
+                    "Username can not be null...");
         } else if (responseDto.getEmail() == null) {
             throw new PasswordOrUsernameException(
-                    "Email can not be null...",
-                    HttpStatus.PRECONDITION_FAILED
+                    "Email can not be null..."
             );
         }
 

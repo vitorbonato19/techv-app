@@ -1,23 +1,25 @@
 package com.techv.vitor.controller.dto;
 
+import com.techv.vitor.entity.enums.TypeTicket;
+
+import java.time.LocalDateTime;
+
 public class TicketRequestDto {
 
     private String requester;
-    private String text;
-    private String reply;
     private Integer typeTicket;
-    private Integer finished;
+    private String text;
+    private LocalDateTime createdAt;
 
     public TicketRequestDto() {
 
     }
 
-    public TicketRequestDto(String requester, String text, String reply, Integer typeTicket, Integer finished) {
+    public TicketRequestDto(String requester, Integer typeTicket, String text, LocalDateTime createdAt) {
         this.requester = requester;
-        this.text = text;
-        this.reply = reply;
         this.typeTicket = typeTicket;
-        this.finished = finished;
+        this.text = text;
+        this.createdAt = createdAt;
     }
 
     public String getRequester() {
@@ -28,22 +30,6 @@ public class TicketRequestDto {
         this.requester = requester;
     }
 
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getReply() {
-        return reply;
-    }
-
-    public void setReply(String reply) {
-        this.reply = reply;
-    }
-
     public Integer getTypeTicket() {
         return typeTicket;
     }
@@ -52,11 +38,19 @@ public class TicketRequestDto {
         this.typeTicket = typeTicket;
     }
 
-    public Integer getFinished() {
-        return finished;
+    public String getText() {
+        return text;
     }
 
-    public void setFinished(Integer finished) {
-        this.finished = finished;
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
