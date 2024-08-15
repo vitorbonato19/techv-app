@@ -1,5 +1,6 @@
 package com.techv.vitor.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.techv.vitor.entity.enums.Finished;
 import com.techv.vitor.entity.enums.TypeTicket;
 import jakarta.annotation.Nonnull;
@@ -23,7 +24,9 @@ public class Ticket {
     @Column(columnDefinition = "TEXT")
     private String reply;
     private TypeTicket typeTicket;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime finishedAt;
     private Integer finished;
 

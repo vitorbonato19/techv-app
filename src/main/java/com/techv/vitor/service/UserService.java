@@ -8,6 +8,7 @@ import com.techv.vitor.entity.enums.Integrated;
 import com.techv.vitor.exception.PasswordOrUsernameException;
 import com.techv.vitor.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -28,8 +29,11 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+    public User findById(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        return user.orElseThrow(
+                () -> new RuntimeException("User not found...")
+        );
     }
 
     @Transactional
@@ -53,6 +57,7 @@ public class UserService {
         responseDto.setEmail(user.getEmail());
         responseDto.setPassword(user.getPassword());
         responseDto.setLastModified(LocalDateTime.now());
+        responseDto.setStatus(HttpStatus.CREATED);
 
         if (responseDto.getPassword() == null) {
             throw new PasswordOrUsernameException(
@@ -73,4 +78,26 @@ public class UserService {
 
     }
 
+    @Transactional
+    public UserResponseDto updateUsers(User user, Long id) {
+
+        User newUser = findById(id);
+        newUser.setUsername(user.getUsername());
+        newUser.setPassword(user.getPassword());
+        newUser.setEmail(user.getEmail());
+        newUser.setTickets(user.getTickets());
+
+        userRepository.save(newUser);
+
+        UserResponseDto responseDto = new UserResponseDto();
+
+        responseDto.setId(newUser.getId());
+        responseDto.setUsername(newUser.getUsername());
+        responseDto.setEmail(newUser.getEmail());
+        responseDto.setPassword(newUser.getPassword());
+        responseDto.setLastModified(LocalDateTime.now());
+        responseDto.setStatus(HttpStatus.OK);
+
+        return responseDto;
+    }
 }

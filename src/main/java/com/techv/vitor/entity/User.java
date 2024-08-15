@@ -1,5 +1,6 @@
 package com.techv.vitor.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.techv.vitor.entity.enums.Admin;
 import com.techv.vitor.entity.enums.Integrated;
 import jakarta.annotation.Nonnull;
@@ -25,6 +26,7 @@ public class User {
     @Nonnull
     private String password;
     private Integer integrated;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModified;
     @Nonnull
     private Integer admin;

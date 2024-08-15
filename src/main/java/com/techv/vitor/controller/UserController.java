@@ -23,14 +23,16 @@ public class UserController {
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<User>> findAll() {
         var clients = userService.findAll();
         return ResponseEntity.ok().body(clients);
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{id}")
-    public ResponseEntity<Optional<User>> findById(@PathVariable Long id) {
+    public ResponseEntity<User> findById(@PathVariable Long id) {
         var clients = userService.findById(id);
         return ResponseEntity.ok().body(clients);
     }
@@ -43,5 +45,13 @@ public class UserController {
                 .path("/{id}")
                 .buildAndExpand(response.getId())
                 .toUri()).body(response);
+    }
+
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/update/{id}")
+    public ResponseEntity<UserResponseDto> updateUsers(@RequestBody User user, @PathVariable Long id) {
+        UserResponseDto response = userService.updateUsers(user, id);
+        return ResponseEntity.ok().body(response);
     }
 }

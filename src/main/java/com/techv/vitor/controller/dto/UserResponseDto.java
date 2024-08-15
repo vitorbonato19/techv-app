@@ -1,8 +1,10 @@
 package com.techv.vitor.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.techv.vitor.entity.enums.Integrated;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Component
@@ -10,27 +12,36 @@ public class UserResponseDto {
 
     private Long id;
 
+    private HttpStatus status;
+
     private String username;
 
     private String password;
 
     private String email;
 
-    private Boolean integrated;
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModified;
 
     public UserResponseDto() {
 
     }
 
-    public UserResponseDto(Long id, String username, String password, String email, Boolean integrated, LocalDateTime lastModified) {
+    public UserResponseDto(Long id, String username, String password, String email, LocalDateTime lastModified, HttpStatus status) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.integrated = integrated;
         this.lastModified = lastModified;
+        this.status = status;
+    }
+
+    public HttpStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(HttpStatus status) {
+        this.status = status;
     }
 
     public LocalDateTime getLastModified() {
@@ -73,11 +84,4 @@ public class UserResponseDto {
         this.email = email;
     }
 
-    public Boolean getIntegrated() {
-        return integrated;
-    }
-
-    public void setIntegrated(Boolean integrated) {
-        this.integrated = integrated;
-    }
 }
