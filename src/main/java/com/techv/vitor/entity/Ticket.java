@@ -31,6 +31,7 @@ public class Ticket {
     private Integer finished;
 
     @ManyToOne
+    @JoinColumn(name = "id_user")
     private User users;
 
     public Ticket() {

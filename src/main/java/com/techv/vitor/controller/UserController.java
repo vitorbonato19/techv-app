@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -29,10 +30,9 @@ public class UserController {
         return ResponseEntity.ok().body(clients);
     }
 
-    @GetMapping
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/{id}")
-    public ResponseEntity<User> findById(@PathVariable Long id) {
+    public ResponseEntity<User> findById(@PathVariable UUID id) {
         var clients = userService.findById(id);
         return ResponseEntity.ok().body(clients);
     }
@@ -47,10 +47,9 @@ public class UserController {
                 .toUri()).body(response);
     }
 
-    @PutMapping
+    @PutMapping("/update/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/update/{id}")
-    public ResponseEntity<UserResponseDto> updateUsers(@RequestBody User user, @PathVariable Long id) {
+    public ResponseEntity<UserResponseDto> updateUsers(@RequestBody User user, @PathVariable UUID id) {
         UserResponseDto response = userService.updateUsers(user, id);
         return ResponseEntity.ok().body(response);
     }

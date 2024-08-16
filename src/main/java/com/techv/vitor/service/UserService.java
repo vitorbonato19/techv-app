@@ -2,38 +2,44 @@ package com.techv.vitor.service;
 
 import com.techv.vitor.controller.dto.UserRequestDto;
 import com.techv.vitor.controller.dto.UserResponseDto;
+import com.techv.vitor.entity.Ticket;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.entity.enums.Admin;
 import com.techv.vitor.entity.enums.Integrated;
 import com.techv.vitor.exception.EntityNotFoundException;
+import com.techv.vitor.exception.NotAdminException;
 import com.techv.vitor.exception.PasswordOrUsernameException;
+import com.techv.vitor.repository.TicketRepository;
 import com.techv.vitor.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    private final TicketRepository ticketRepository;
+
+    public UserService(UserRepository userRepository, TicketRepository ticketRepository) {
         this.userRepository = userRepository;
+        this.ticketRepository = ticketRepository;
     }
 
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
-    public User findById(Long id) {
+    public User findById(UUID id) {
         Optional<User> user = userRepository.findById(id);
         return user.orElseThrow(
-                () -> new EntityNotFoundException("User not found...Verify the id:  " + id)
+                () -> new EntityNotFoundException("User not found...Verify the id:  " + id, HttpStatus.NOT_FOUND)
         );
     }
 
@@ -59,16 +65,20 @@ public class UserService {
         responseDto.setPassword(user.getPassword());
         responseDto.setLastModified(LocalDateTime.now());
         responseDto.setStatus(HttpStatus.CREATED);
+        responseDto.setStatusCode(HttpStatus.CREATED);
 
         if (responseDto.getPassword() == null) {
             throw new PasswordOrUsernameException(
-                    "Password can not be null...");
+                    "Password can not be null...",
+                    HttpStatus.PRECONDITION_FAILED);
         } else if (responseDto.getUsername() == null) {
             throw new PasswordOrUsernameException(
-                    "Username can not be null...");
+                    "Username can not be null...",
+                    HttpStatus.PRECONDITION_FAILED);
         } else if (responseDto.getEmail() == null) {
             throw new PasswordOrUsernameException(
-                    "Email can not be null..."
+                    "Email can not be null...",
+                    HttpStatus.PRECONDITION_FAILED
             );
         }
 
@@ -77,7 +87,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto updateUsers(User user, Long id) {
+    public UserResponseDto updateUsers(User user, UUID id) {
 
         User newUser = findById(id);
         newUser.setUsername(user.getUsername());
@@ -98,4 +108,5 @@ public class UserService {
 
         return responseDto;
     }
+
 }

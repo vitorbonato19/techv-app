@@ -1,18 +1,20 @@
 package com.techv.vitor.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.techv.vitor.entity.enums.Integrated;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Component
 public class UserResponseDto {
 
-    private Long id;
+    private UUID id;
 
     private HttpStatus status;
+
+    private HttpStatus statusCode;
 
     private String username;
 
@@ -27,13 +29,22 @@ public class UserResponseDto {
 
     }
 
-    public UserResponseDto(Long id, String username, String password, String email, LocalDateTime lastModified, HttpStatus status) {
+    public UserResponseDto(UUID id, String username, String password, String email, LocalDateTime lastModified, HttpStatus status, HttpStatus statusCode) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
         this.lastModified = lastModified;
         this.status = status;
+        this.statusCode = statusCode;
+    }
+
+    public int getStatusCode() {
+        return statusCode.value();
+    }
+
+    public void setStatusCode(HttpStatus statusCode) {
+        this.statusCode = statusCode;
     }
 
     public HttpStatus getStatus() {
@@ -52,11 +63,11 @@ public class UserResponseDto {
         this.lastModified = lastModified;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

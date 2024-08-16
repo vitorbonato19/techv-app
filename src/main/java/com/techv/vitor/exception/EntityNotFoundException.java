@@ -4,10 +4,11 @@ import org.springframework.http.HttpStatus;
 
 public class EntityNotFoundException extends RuntimeException {
 
-    private HttpStatus httpStatus;
+    private final HttpStatus httpStatus;
 
-    public EntityNotFoundException(String message) {
+    public EntityNotFoundException(String message, HttpStatus httpStatus) {
         super(message);
+        this.httpStatus = httpStatus;
     }
 
     public HttpStatus getHttpStatus() {

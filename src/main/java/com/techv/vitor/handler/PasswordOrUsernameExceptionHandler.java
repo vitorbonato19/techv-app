@@ -21,10 +21,10 @@ public class PasswordOrUsernameExceptionHandler {
     public ResponseEntity<Map<String, Object>> handler(PasswordOrUsernameException ex, HttpServletRequest request) {
 
         Map<String, Object> handlerResponse = new HashMap<>();
-        handlerResponse.put("Status", ex.getHttpStatus().value());
-        handlerResponse.put("Error", ex.getHttpStatus().getReasonPhrase());
-        handlerResponse.put("Caused by", ex.getMessage());
-        handlerResponse.put("Path", request.getRequestURI());
+        handlerResponse.put("status", ex.getHttpStatus().value());
+        handlerResponse.put("error", ex.getHttpStatus().getReasonPhrase());
+        handlerResponse.put("caused by", ex.getMessage());
+        handlerResponse.put("path", request.getRequestURI());
 
         return new ResponseEntity<>(handlerResponse, ex.getHttpStatus());
     }

@@ -2,11 +2,11 @@ package com.techv.vitor.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class PasswordOrUsernameException extends RuntimeException {
+public class NotAdminException extends RuntimeException {
 
     private final HttpStatus httpStatus;
 
-    public PasswordOrUsernameException(String message,HttpStatus httpStatus) {
+    public NotAdminException(String message, HttpStatus httpStatus) {
         super(message);
         this.httpStatus = httpStatus;
     }

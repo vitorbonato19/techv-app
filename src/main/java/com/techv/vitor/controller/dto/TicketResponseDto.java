@@ -1,32 +1,52 @@
 package com.techv.vitor.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.techv.vitor.entity.enums.TypeTicket;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
 public class TicketResponseDto {
 
     private Long id;
+    private HttpStatus status;
+    private HttpStatus statusCode;
     private String requester;
-    private String analyst;
     private String text;
-    private String reply;
     private Integer typeTicket;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
-    private LocalDateTime finishedAt;
+
     private Integer finished;
 
     public TicketResponseDto() {
 
     }
 
-    public TicketResponseDto(Long id, String requester, String text, String reply, Integer typeTicket, Integer finished) {
+    public TicketResponseDto(Long id, HttpStatus status, HttpStatus statusCode, String requester, String text,Integer typeTicket, Integer finished) {
         this.id = id;
+        this.status = status;
+        this.statusCode = statusCode;
         this.requester = requester;
         this.text = text;
-        this.reply = reply;
         this.typeTicket = typeTicket;
         this.finished = finished;
+    }
+
+    public int getStatusCode() {
+        return statusCode.value();
+    }
+
+    public void setStatusCode(HttpStatus statusCode) {
+        this.statusCode = statusCode;
+    }
+
+    public HttpStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(HttpStatus status) {
+        this.status = status;
     }
 
     public Long getId() {
@@ -49,22 +69,6 @@ public class TicketResponseDto {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getFinishedAt() {
-        return finishedAt;
-    }
-
-    public void setFinishedAt(LocalDateTime finishedAt) {
-        this.finishedAt = finishedAt;
-    }
-
-    public String getAnalyst() {
-        return analyst;
-    }
-
-    public void setAnalyst(String analyst) {
-        this.analyst = analyst;
-    }
-
     public String getRequester() {
         return requester;
     }
@@ -79,14 +83,6 @@ public class TicketResponseDto {
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public String getReply() {
-        return reply;
-    }
-
-    public void setReply(String reply) {
-        this.reply = reply;
     }
 
     public Integer getTypeTicket() {

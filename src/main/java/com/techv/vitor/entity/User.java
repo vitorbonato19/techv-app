@@ -17,8 +17,8 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     @Nonnull
     private String username;
     @Nonnull
@@ -38,7 +38,7 @@ public class User {
 
     }
 
-    public User(Long id, String username, String email, String password, Integrated integrated, LocalDateTime lastModified, Admin admin) {
+    public User(UUID id, String username, String email, String password, Integrated integrated, LocalDateTime lastModified, Admin admin) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -46,6 +46,14 @@ public class User {
         setIntegrated(integrated);
         this.lastModified = lastModified;
         setAdmin(admin);
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public Integer getIntegrated() {
@@ -74,13 +82,6 @@ public class User {
         this.tickets = tickets;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getUsername() {
         return username;

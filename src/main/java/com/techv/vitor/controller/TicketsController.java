@@ -3,6 +3,8 @@ package com.techv.vitor.controller;
 import com.techv.vitor.controller.dto.TicketRequestDto;
 import com.techv.vitor.controller.dto.TicketResponseDto;
 import com.techv.vitor.entity.Ticket;
+import com.techv.vitor.entity.User;
+import com.techv.vitor.exception.TicketNotFoundException;
 import com.techv.vitor.repository.TicketRepository;
 import com.techv.vitor.service.TicketService;
 import org.springframework.http.HttpStatus;
@@ -32,24 +34,30 @@ public class TicketsController {
         return ResponseEntity.ok().body(tickets);
     }
 
-    @GetMapping
-    @RequestMapping(value = "/{id}")
-    public ResponseEntity<Optional<Ticket>> findById(@PathVariable Long id) {
-        var ticketsById = ticketRepository.findById(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<Ticket> findById(@PathVariable Long id) {
+         var ticketsById = ticketRepository.findById(id).orElseThrow(() ->
+                 new TicketNotFoundException(
+                         "Ticket nout found, verify your id...",
+                         HttpStatus.NOT_FOUND));
         return ResponseEntity.ok().body(ticketsById);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<TicketResponseDto> createTicket(@RequestBody TicketRequestDto ticketRequestDto) {
-
         var response = ticketService.createTicket(ticketRequestDto);
-
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("{id}")
                 .buildAndExpand(response.getId())
-                .toUri()).build();
+                .toUri()).body(response);
+    }
 
+    @PutMapping("/agree/{id}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ResponseEntity<Ticket> agreeTicket(@RequestBody User username, @PathVariable  Long ticketId) {
+        var response = ticketService.agreeTicket(username, ticketId);
+        return ResponseEntity.accepted().body(response);
     }
 
 }
