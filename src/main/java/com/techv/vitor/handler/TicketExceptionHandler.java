@@ -1,6 +1,5 @@
 package com.techv.vitor.handler;
 
-import com.techv.vitor.exception.PasswordOrUsernameException;
 import com.techv.vitor.exception.TicketCreatedException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;

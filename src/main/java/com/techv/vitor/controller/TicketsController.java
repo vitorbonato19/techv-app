@@ -14,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/tickets")
@@ -53,11 +54,11 @@ public class TicketsController {
                 .toUri()).body(response);
     }
 
-    @PutMapping("/agree/{id}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseEntity<Ticket> agreeTicket(@RequestBody User username, @PathVariable  Long ticketId) {
-        var response = ticketService.agreeTicket(username, ticketId);
-        return ResponseEntity.accepted().body(response);
+    @PutMapping("/agree/{userUUID}/{ticketId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<TicketResponseDto> agreeTicket(@PathVariable UUID userUUID, @PathVariable Long ticketId) {
+        var response = ticketService.agreeTicket(userUUID, ticketId);
+        return ResponseEntity.ok().body(response);
     }
 
 }

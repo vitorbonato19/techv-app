@@ -6,8 +6,6 @@ import com.techv.vitor.entity.Ticket;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.entity.enums.Finished;
 import com.techv.vitor.entity.enums.TypeTicket;
-import com.techv.vitor.exception.EntityNotFoundException;
-import com.techv.vitor.exception.NotAdminException;
 import com.techv.vitor.exception.TicketCreatedException;
 import com.techv.vitor.exception.TicketNotFoundException;
 import com.techv.vitor.repository.TicketRepository;
@@ -18,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,11 +24,11 @@ public class TicketService {
 
     private final TicketRepository ticketRepository;
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public TicketService(TicketRepository ticketRepository, UserRepository userRepository) {
+    public TicketService(TicketRepository ticketRepository, UserService userService) {
         this.ticketRepository = ticketRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     public List<Ticket> findAll() {
@@ -66,32 +65,37 @@ public class TicketService {
         responseDto.setCreatedAt(LocalDateTime.now());
 
         if (responseDto.getRequester() == null || responseDto.getTypeTicket() == null) {
-            throw new TicketCreatedException("Have fields that can't be null...", HttpStatus.PRECONDITION_FAILED);
+            throw new TicketCreatedException("Have fields that can't be null..." + "Requester: " + responseDto.getRequester() + " | TypeTicket: " + responseDto.getTypeTicket(), HttpStatus.PRECONDITION_FAILED);
         }
 
         return responseDto;
     }
 
-   /* @Transactional
-    public Ticket agreeTicket(UUID userId, Long ticketId) {
+    @Transactional
+    public TicketResponseDto agreeTicket(UUID userId, Long ticketId) {
 
-        Ticket ticket = new Ticket();
+        Ticket ticketResponse = findById(ticketId);
+        User usernameResponse = userService.findById(userId);
 
-        var ticketResponse = ticketRepository.findById(ticketId);
-        var usernameResponse = userRepository.findById(userId);
+        if (ticketResponse != null) {
+            if (usernameResponse != null) {
 
-        if (ticketResponse.isPresent()) {
-            if(usernameResponse.isPresent()) {
+                ticketResponse.setAnalyst(usernameResponse.getUsername());
+                ticketResponse.setUsers(usernameResponse);
+                ticketRepository.save(ticketResponse);
 
-                ticket.setAnalyst(username.getUsername());
-                ticket.setUsers(username);
-                ticketRepository.save(ticket);
-                return ticket;
+                TicketResponseDto ticketResponseDto = new TicketResponseDto();
+
+                ticketResponseDto.setId(ticketResponse.getId());
+                ticketResponseDto.setStatus(HttpStatus.OK);
+                ticketResponseDto.setStatusCode(HttpStatus.OK);
+                ticketResponseDto.setRequester(ticketResponse.getRequester());
+
+                return ticketResponseDto;
 
             }
         }
-
         throw new TicketNotFoundException("Ticket not found...Verify ticket id...", HttpStatus.NOT_FOUND);
-    }*/
+    }
 
 }

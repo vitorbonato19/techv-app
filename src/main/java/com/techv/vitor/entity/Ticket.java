@@ -1,6 +1,7 @@
 package com.techv.vitor.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.techv.vitor.entity.enums.Finished;
 import com.techv.vitor.entity.enums.TypeTicket;
 import jakarta.annotation.Nonnull;
@@ -127,6 +128,7 @@ public class Ticket {
         }
     }
 
+    @JsonIgnore
     public User getUsers() {
         return users;
     }
