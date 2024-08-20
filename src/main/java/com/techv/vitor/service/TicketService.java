@@ -6,6 +6,7 @@ import com.techv.vitor.entity.Ticket;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.entity.enums.Finished;
 import com.techv.vitor.entity.enums.TypeTicket;
+import com.techv.vitor.exception.EntityNotFoundException;
 import com.techv.vitor.exception.TicketCreatedException;
 import com.techv.vitor.exception.TicketNotFoundException;
 import com.techv.vitor.repository.TicketRepository;
@@ -74,28 +75,35 @@ public class TicketService {
     @Transactional
     public TicketResponseDto agreeTicket(UUID userId, Long ticketId) {
 
-        Ticket ticketResponse = findById(ticketId);
-        User usernameResponse = userService.findById(userId);
+        Ticket ticketResponse = new Ticket();
+        User usernameResponse = new User();
 
-        if (ticketResponse != null) {
-            if (usernameResponse != null) {
-
-                ticketResponse.setAnalyst(usernameResponse.getUsername());
-                ticketResponse.setUsers(usernameResponse);
-                ticketRepository.save(ticketResponse);
-
-                TicketResponseDto ticketResponseDto = new TicketResponseDto();
-
-                ticketResponseDto.setId(ticketResponse.getId());
-                ticketResponseDto.setStatus(HttpStatus.OK);
-                ticketResponseDto.setStatusCode(HttpStatus.OK);
-                ticketResponseDto.setRequester(ticketResponse.getRequester());
-
-                return ticketResponseDto;
-
+        try {
+            usernameResponse = userService.findById(userId);
+            try {
+                ticketResponse = findById(ticketId);
+            } catch (TicketNotFoundException e) {
+                throw new TicketNotFoundException("Ticket not found...Verify ticket id...",
+                        HttpStatus.NOT_FOUND);
             }
+        } catch (EntityNotFoundException ex) {
+            throw new EntityNotFoundException("User not found...Verify the id:" + usernameResponse.getId(),
+                    HttpStatus.NOT_FOUND);
         }
-        throw new TicketNotFoundException("Ticket not found...Verify ticket id...", HttpStatus.NOT_FOUND);
-    }
 
+        ticketResponse.setAnalyst(usernameResponse.getUsername());
+        ticketResponse.setUsers(usernameResponse);
+        ticketRepository.save(ticketResponse);
+
+        TicketResponseDto ticketResponseDto = new TicketResponseDto();
+
+        ticketResponseDto.setId(ticketResponse.getId());
+        ticketResponseDto.setStatus(HttpStatus.OK);
+        ticketResponseDto.setStatusCode(HttpStatus.OK);
+        ticketResponseDto.setRequester(ticketResponse.getRequester());
+
+        return ticketResponseDto;
+
+
+    }
 }

@@ -4,9 +4,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.techv.vitor.entity.enums.Admin;
 import com.techv.vitor.entity.enums.Integrated;
 import jakarta.annotation.Nonnull;
-import jakarta.persistence.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
 import java.util.List;
