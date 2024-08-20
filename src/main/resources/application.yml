@@ -21,3 +21,8 @@ spring:
     username: sa
     password: ''
     platform: h2
+jwt:
+  public:
+    key: classpath:app.pub
+  private:
+    key: classpath:app.key
