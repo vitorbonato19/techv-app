@@ -8,10 +8,12 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -25,10 +27,10 @@ import java.security.interfaces.RSAPublicKey;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Value("${private.key}")
+    @Value("${jwt.private.key}")
     private RSAPrivateKey privateKey;
 
-    @Value("${public.key}")
+    @Value("${jwt.public.key}")
     private RSAPublicKey publicKey;
 
     @Bean
@@ -36,6 +38,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(authorize -> authorize
+                                        .requestMatchers(HttpMethod.POST, "/api/v1/users/login").permitAll()
                                         .anyRequest().authenticated())
                 .csrf((csrf -> {
                     try {
@@ -47,6 +50,11 @@ public class SecurityConfig {
                     }
                 }));
         return http.build();
+    }
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean

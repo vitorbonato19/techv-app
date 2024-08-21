@@ -1,5 +1,7 @@
 package com.techv.vitor.controller;
 
+import com.techv.vitor.controller.dto.LoginRequest;
+import com.techv.vitor.controller.dto.LoginResponse;
 import com.techv.vitor.controller.dto.UserRequestDto;
 import com.techv.vitor.controller.dto.UserResponseDto;
 import com.techv.vitor.entity.User;
@@ -35,6 +37,12 @@ public class UserController {
     public ResponseEntity<User> findById(@PathVariable UUID id) {
         var clients = userService.findById(id);
         return ResponseEntity.ok().body(clients);
+    }
+
+    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+        return userService.login(loginRequest);
     }
 
     @PostMapping
