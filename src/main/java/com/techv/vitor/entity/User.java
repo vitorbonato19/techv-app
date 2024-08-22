@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -87,7 +88,6 @@ public class User {
         this.tickets = tickets;
     }
 
-
     public String getUsername() {
         return username;
     }
@@ -122,4 +122,17 @@ public class User {
         }
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
