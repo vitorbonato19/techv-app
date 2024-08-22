@@ -101,7 +101,7 @@ public class UserService {
         User user = new User();
 
         user.setUsername(requestDto.getUsername());
-        user.setPassword(requestDto.getPassword());
+        user.setPassword(encoder.encode(requestDto.getPassword()));
         user.setEmail(requestDto.getEmail());
         user.setLastModified(LocalDateTime.now());
         user.setIntegrated(Integrated.TRUE);
@@ -114,7 +114,7 @@ public class UserService {
         responseDto.setId(user.getId());
         responseDto.setUsername(user.getUsername());
         responseDto.setEmail(user.getEmail());
-        responseDto.setPassword(user.getPassword());
+        responseDto.setPassword(encoder.encode(user.getPassword()));
         responseDto.setLastModified(LocalDateTime.now());
         responseDto.setStatus(HttpStatus.CREATED);
         responseDto.setStatusCode(HttpStatus.CREATED);
