@@ -5,7 +5,6 @@ import com.techv.vitor.controller.dto.LoginResponse;
 import com.techv.vitor.controller.dto.UserRequestDto;
 import com.techv.vitor.controller.dto.UserResponseDto;
 import com.techv.vitor.entity.User;
-import com.techv.vitor.entity.enums.Admin;
 import com.techv.vitor.entity.enums.Integrated;
 import com.techv.vitor.exception.EntityNotFoundException;
 import com.techv.vitor.exception.PasswordOrUsernameException;
@@ -39,7 +38,10 @@ public class UserService {
 
     private final JwtEncoder jwtEncoder;
 
-    public UserService(UserRepository userRepository, TicketRepository ticketRepository, BCryptPasswordEncoder encoder, JwtEncoder jwtEncoder) {
+    public UserService(UserRepository userRepository,
+                       TicketRepository ticketRepository,
+                       BCryptPasswordEncoder encoder,
+                       JwtEncoder jwtEncoder) {
         this.userRepository = userRepository;
         this.ticketRepository = ticketRepository;
         this.encoder = encoder;
@@ -53,14 +55,20 @@ public class UserService {
     public User findById(UUID id) {
         Optional<User> user = userRepository.findById(id);
         return user.orElseThrow(
-                () -> new EntityNotFoundException("User not found...Verify the id:  " + id, HttpStatus.NOT_FOUND)
+                () -> new EntityNotFoundException("User not found...Verify the id:  " +
+                        id, HttpStatus.NOT_FOUND)
         );
     }
 
     @Transactional
     public Boolean verifyLogin(LoginRequest loginRequest, PasswordEncoder encoder) {
-        var user = userRepository.findByUsername(loginRequest.getUsername());
-        return encoder.matches(loginRequest.getPassword(), user.get().getPassword());
+        var user = userRepository.findByUsername(loginRequest.getUsername())
+                .orElseThrow(
+                        () -> new EntityNotFoundException("User not found...Verify the username: " +
+                                loginRequest.getUsername(),
+                                HttpStatus.NOT_FOUND)
+                );
+        return encoder.matches(loginRequest.getPassword(), user.getPassword());
     }
 
     @Transactional
@@ -105,7 +113,6 @@ public class UserService {
         user.setEmail(requestDto.getEmail());
         user.setLastModified(LocalDateTime.now());
         user.setIntegrated(Integrated.TRUE);
-        user.setAdmin(Admin.ADMIN);
 
         userRepository.save(user);
 
