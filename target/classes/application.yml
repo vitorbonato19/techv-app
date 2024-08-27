@@ -9,8 +9,6 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
-  profiles:
-    active: "h2"
   h2:
     console:
       enabled: true
@@ -23,6 +21,6 @@ spring:
     platform: h2
 jwt:
   public:
-    key: classpath:app.pub
+    key: classpath:public_key
   private:
-    key: classpath:app.key
+    key: classpath:private_key

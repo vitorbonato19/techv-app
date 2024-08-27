@@ -1,19 +1,14 @@
 package com.techv.vitor.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.techv.vitor.entity.enums.Admin;
 import com.techv.vitor.entity.enums.Integrated;
 import jakarta.annotation.Nonnull;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -32,8 +27,9 @@ public class User {
     private Integer integrated;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModified;
-    @Nonnull
-    private Integer admin;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "tb_user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Roles> roles;
 
     @OneToMany(mappedBy = "users")
     private List<Ticket> tickets;
@@ -42,14 +38,13 @@ public class User {
 
     }
 
-    public User(UUID id, String username, String email, String password, Integrated integrated, LocalDateTime lastModified, Admin admin) {
+    public User(UUID id, String username, String email, String password, Integrated integrated, LocalDateTime lastModified) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
         setIntegrated(integrated);
         this.lastModified = lastModified;
-        setAdmin(admin);
     }
 
     public UUID getId() {
@@ -69,8 +64,6 @@ public class User {
             this.integrated = integrated.getValue();
         }
     }
-
-
 
     public LocalDateTime getLastModified() {
         return lastModified;
@@ -112,16 +105,13 @@ public class User {
         this.password = password;
     }
 
-    public Integer getAdmin() {
-        return admin;
+    public Set<Roles> getRoles() {
+        return roles;
     }
 
-    public void setAdmin(Admin admin) {
-        if (admin != null) {
-            this.admin = admin.getAdminValue();
-        }
+    public void setRoles(Set<Roles> roles) {
+        this.roles = roles;
     }
-
 
     @Override
     public boolean equals(Object o) {
