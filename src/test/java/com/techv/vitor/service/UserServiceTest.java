@@ -1,11 +1,15 @@
 package com.techv.vitor.service;
 
 import com.techv.vitor.controller.dto.LoginRequest;
+import com.techv.vitor.controller.dto.UserRequestDto;
+import com.techv.vitor.controller.dto.UserResponseDto;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.entity.enums.Integrated;
 import com.techv.vitor.exception.EntityNotFoundException;
 import com.techv.vitor.repository.UserRepository;
+import jakarta.websocket.RemoteEndpoint;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +17,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
+import org.springframework.cglib.core.Local;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -29,6 +37,9 @@ class UserServiceTest {
 
     @Mock
     private PasswordEncoder encoder;
+
+    @Mock
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @InjectMocks
     private UserService userService;
@@ -68,15 +79,60 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Should return boolean value true")
-    void shouldReturnTrueWhenLoginIsOk() {
-        User mock = new User(UUID.randomUUID(), "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
+    @DisplayName("Should return true when password login are equals from the encoded user password")
+    void verifiyLoginButshouldReturnTrueWhenLoginIsOk() {
+        var mock = new User(UUID.randomUUID(), "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
         Mockito.when(userRepository.findByUsername(mock.getUsername())).thenReturn(Optional.of(mock));
-        var request = new LoginRequest(mock.getUsername(), mock.getPassword());
-        Mockito.when(userService.verifyLogin(request, encoder)).thenReturn(Boolean.TRUE);
+        var request = new LoginRequest("Vitor", "12345");
+        Mockito.when(encoder.matches(mock.getPassword(), request.getPassword())).thenReturn(true);
         var response = userService.verifyLogin(request, encoder);
 
-        Assertions.assertTrue(response.booleanValue());
+        Assertions.assertTrue(response);
     }
 
+    @Test
+    @DisplayName("Should return false when password login are different from the encoded user password")
+    void verifiyLoginButshouldReturnFalseWhenPasswordLoginNotMatches() {
+        var mock = new User(UUID.randomUUID(), "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
+        Mockito.when(userRepository.findByUsername(mock.getUsername())).thenReturn(Optional.of(mock));
+        var request = new LoginRequest("Vitor", "12345");
+        Mockito.when(encoder.matches(mock.getPassword(), request.getPassword())).thenReturn(false);
+        var response = userService.verifyLogin(request, encoder);
+
+        Assertions.assertFalse(response);
+    }
+
+    @Test
+    @DisplayName("Should insert a user in database and return true if is present")
+    void insertUsers() {
+        var userRequest = new UserRequestDto(
+                "Vitor",
+                "vitor@java.com",
+                "12345");
+
+        var user = new User();
+        user.setUsername("Vitor");
+        user.setPassword(encoder.encode("12345"));
+        user.setEmail("vitor@java.com");
+        user.setLastModified(LocalDateTime.now());
+
+        var userResponse = new UserResponseDto(
+                user.getId(),
+                user.getUsername(),
+                user.getPassword(),
+                user.getEmail(),
+                user.getLastModified(),
+                HttpStatus.CREATED,
+                HttpStatus.CREATED
+        );
+
+        Mockito.when(userService.insertUsers(userRequest)).thenReturn(userResponse);
+        Mockito.when(userRepository.save(user)).thenReturn(user);
+        Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+        var responseDto = userService.insertUsers(userRequest);
+        var response = userRepository.findById(responseDto.getId());
+
+        Assertions.assertTrue(response.isPresent());
+    }
 }

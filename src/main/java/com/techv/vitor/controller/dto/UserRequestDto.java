@@ -5,19 +5,15 @@ public class UserRequestDto {
     private String username;
     private String email;
     private String password;
-    private Integer integrated;
-    private Integer admin;
 
     public UserRequestDto() {
 
     }
 
-    public UserRequestDto(String username, String email, String password, Integer integrated, Integer admin) {
+    public UserRequestDto(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.integrated = integrated;
-        this.admin = admin;
     }
 
     public String getUsername() {
@@ -44,19 +40,4 @@ public class UserRequestDto {
         this.password = password;
     }
 
-    public Integer getIntegrated() {
-        return integrated;
-    }
-
-    public void setIntegrated(Integer integrated) {
-        this.integrated = integrated;
-    }
-
-    public Integer getAdmin() {
-        return admin;
-    }
-
-    public void setAdmin(Integer admin) {
-        this.admin = admin;
-    }
 }
