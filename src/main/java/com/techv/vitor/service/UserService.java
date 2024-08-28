@@ -61,14 +61,43 @@ public class UserService {
     }
 
     @Transactional
-    public Boolean verifyLogin(LoginRequest loginRequest, PasswordEncoder encoder) {
-        var user = userRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(
-                        () -> new EntityNotFoundException("User not found...Verify the username: " +
-                                loginRequest.getUsername(),
-                                HttpStatus.NOT_FOUND)
-                );
-        return encoder.matches(loginRequest.getPassword(), user.getPassword());
+    public UserResponseDto insertUsers(UserRequestDto requestDto) {
+
+        if (requestDto.getUsername() == null ||
+                requestDto.getPassword() == null ||
+                    requestDto.getEmail() == null) {
+            throw new PasswordOrUsernameException(
+                    "Existing fields that can't be null...",
+                    HttpStatus.PRECONDITION_FAILED);
+        }
+
+        try {
+
+            User user = new User();
+
+            user.setUsername(requestDto.getUsername());
+            user.setPassword(encoder.encode(requestDto.getPassword()));
+            user.setEmail(requestDto.getEmail());
+            user.setLastModified(LocalDateTime.now());
+
+            userRepository.save(user);
+
+            UserResponseDto responseDto = new UserResponseDto();
+
+            responseDto.setId(user.getId());
+            responseDto.setUsername(user.getUsername());
+            responseDto.setEmail(user.getEmail());
+            responseDto.setPassword(user.getPassword());
+            responseDto.setLastModified(LocalDateTime.now());
+            responseDto.setStatus(HttpStatus.CREATED);
+            responseDto.setStatusCode(HttpStatus.CREATED);
+
+            return responseDto;
+
+        } catch (PasswordOrUsernameException ex) {
+            throw new PasswordOrUsernameException("Existing fields that can't be null...", HttpStatus.PRECONDITION_FAILED);
+        }
+
     }
 
     @Transactional
@@ -84,11 +113,11 @@ public class UserService {
         Long expiresIn = 150L;
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                    .issuer("api.java")
-                    .subject(user.get().getId().toString())
-                    .issuedAt(now)
-                    .expiresAt(now.plusSeconds(expiresIn))
-                    .build();
+                .issuer("api.java")
+                .subject(user.get().getId().toString())
+                .issuedAt(now)
+                .expiresAt(now.plusSeconds(expiresIn))
+                .build();
 
         var jwtValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
@@ -101,49 +130,17 @@ public class UserService {
         return ResponseEntity.ok().body(response);
     }
 
-
-
-    @Transactional
-    public UserResponseDto insertUsers(UserRequestDto requestDto) {
-
-        User user = new User();
-
-        user.setUsername(requestDto.getUsername());
-        user.setPassword(encoder.encode(requestDto.getPassword()));
-        user.setEmail(requestDto.getEmail());
-        user.setLastModified(LocalDateTime.now());
-        user.setIntegrated(Integrated.TRUE);
-
-        userRepository.save(user);
-
-        UserResponseDto responseDto = new UserResponseDto();
-
-        responseDto.setId(user.getId());
-        responseDto.setUsername(user.getUsername());
-        responseDto.setEmail(user.getEmail());
-        responseDto.setPassword(encoder.encode(user.getPassword()));
-        responseDto.setLastModified(LocalDateTime.now());
-        responseDto.setStatus(HttpStatus.CREATED);
-        responseDto.setStatusCode(HttpStatus.CREATED);
-
-        if (responseDto.getPassword() == null) {
-            throw new PasswordOrUsernameException(
-                    "Password can not be null...",
-                    HttpStatus.PRECONDITION_FAILED);
-        } else if (responseDto.getUsername() == null) {
-            throw new PasswordOrUsernameException(
-                    "Username can not be null...",
-                    HttpStatus.PRECONDITION_FAILED);
-        } else if (responseDto.getEmail() == null) {
-            throw new PasswordOrUsernameException(
-                    "Email can not be null...",
-                    HttpStatus.PRECONDITION_FAILED
-            );
-        }
-
-        return responseDto;
-
+            @Transactional
+                    public Boolean verifyLogin(LoginRequest loginRequest, PasswordEncoder encoder) {
+                        var user = userRepository.findByUsername(loginRequest.getUsername())
+                                .orElseThrow(
+                                        () -> new EntityNotFoundException("User not found...Verify the username: " +
+                                loginRequest.getUsername(),
+                                HttpStatus.NOT_FOUND)
+                );
+        return encoder.matches(loginRequest.getPassword(), user.getPassword());
     }
+
 
     @Transactional
     public UserResponseDto updateUsers(User user, UUID id) {
