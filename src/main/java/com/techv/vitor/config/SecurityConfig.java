@@ -42,6 +42,12 @@ public class SecurityConfig {
                                         .requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll()
                                         .requestMatchers(HttpMethod.POST, "/api/v1/**").permitAll()
                                         .requestMatchers(HttpMethod.PUT, "/api/v1/**").permitAll()
+                                        .requestMatchers("/swagger-ui/**",
+                                                "/v3/api-docs/**",
+                                                "/swagger-resources/**",
+                                                "/swagger-ui.html",
+                                                "/v2/api-docs/**",
+                                                "/webjars/**").permitAll()
                                         .anyRequest().authenticated())
                 .csrf((csrf -> {
                     try {
