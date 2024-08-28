@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
+
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
@@ -105,12 +107,15 @@ class UserServiceTest {
     @Test
     @DisplayName("Should insert a user in database and return true if is present")
     void insertUsers() {
+        var id = UUID.randomUUID();
+
         var userRequest = new UserRequestDto(
                 "Vitor",
                 "vitor@java.com",
                 "12345");
 
         var user = new User();
+        user.setId(id);
         user.setUsername("Vitor");
         user.setPassword(encoder.encode("12345"));
         user.setEmail("vitor@java.com");
@@ -126,8 +131,11 @@ class UserServiceTest {
                 HttpStatus.CREATED
         );
 
-        Mockito.when(userService.insertUsers(userRequest)).thenReturn(userResponse);
-        Mockito.when(userRepository.save(user)).thenReturn(user);
+        Mockito.when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+            User userSave = invocation.getArgument(0);
+            userSave.setId(id);
+            return userSave;
+        });
         Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
         var responseDto = userService.insertUsers(userRequest);
