@@ -122,15 +122,6 @@ class UserServiceTest {
         user.setEmail(userRequest.getEmail());
         user.setLastModified(LocalDateTime.now());
 
-        var userResponse = new UserResponseDto(
-                user.getId(),
-                user.getUsername(),
-                user.getPassword(),
-                user.getEmail(),
-                user.getLastModified(),
-                HttpStatus.CREATED,
-                HttpStatus.CREATED
-        );
 
         Mockito.when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
             User userSave = invocation.getArgument(0);
@@ -162,15 +153,6 @@ class UserServiceTest {
         user.setEmail(userRequest.getPassword());
         user.setLastModified(LocalDateTime.now());
 
-        var userResponse = new UserResponseDto(
-                user.getId(),
-                user.getUsername(),
-                user.getPassword(),
-                user.getEmail(),
-                user.getLastModified(),
-                HttpStatus.CREATED,
-                HttpStatus.CREATED
-        );
 
         Assertions.assertThrows(PasswordOrUsernameException.class, () -> { userService.insertUsers(userRequest); });
     }
