@@ -101,7 +101,17 @@ public class TicketService {
         ticketResponseDto.setRequester(ticketResponse.getRequester());
 
         return ticketResponseDto;
+    }
 
+    @Transactional
+    public void deleteTicketById(Long id) {
 
+        var ticketResponse = ticketRepository.findById(id);
+
+        if (!ticketResponse.isPresent()) {
+            throw new TicketNotFoundException("Ticket not found...Verify the id..." + id , HttpStatus.NOT_FOUND);
+        }
+
+        ticketRepository.deleteById(id);
     }
 }
