@@ -5,7 +5,6 @@ import com.techv.vitor.controller.dto.LoginResponse;
 import com.techv.vitor.controller.dto.UserRequestDto;
 import com.techv.vitor.controller.dto.UserResponseDto;
 import com.techv.vitor.entity.User;
-import com.techv.vitor.entity.enums.Integrated;
 import com.techv.vitor.exception.EntityNotFoundException;
 import com.techv.vitor.exception.PasswordOrUsernameException;
 import com.techv.vitor.repository.TicketRepository;
@@ -130,11 +129,12 @@ public class UserService {
         return ResponseEntity.ok().body(response);
     }
 
-            @Transactional
-                    public Boolean verifyLogin(LoginRequest loginRequest, PasswordEncoder encoder) {
-                        var user = userRepository.findByUsername(loginRequest.getUsername())
-                                .orElseThrow(
-                                        () -> new EntityNotFoundException("User not found...Verify the username: " +
+
+    @Transactional
+    public Boolean verifyLogin(LoginRequest loginRequest, PasswordEncoder encoder) {
+        var user = userRepository.findByUsername(loginRequest.getUsername())
+                .orElseThrow(
+                        () -> new EntityNotFoundException("User not found...Verify the username: " +
                                 loginRequest.getUsername(),
                                 HttpStatus.NOT_FOUND)
                 );
@@ -165,4 +165,16 @@ public class UserService {
         return responseDto;
     }
 
+
+    @Transactional
+    public void deleteUser(UUID id) {
+
+        var userResponse = userRepository.findById(id);
+
+        if (!userResponse.isPresent()) {
+            throw new EntityNotFoundException("User not found...Verify the id..." + id, HttpStatus.NOT_FOUND);
+        }
+
+        userRepository.deleteById(id);
+    }
 }
