@@ -6,6 +6,7 @@ import com.techv.vitor.controller.dto.UserResponseDto;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.entity.enums.Integrated;
 import com.techv.vitor.exception.EntityNotFoundException;
+import com.techv.vitor.exception.PasswordOrUsernameException;
 import com.techv.vitor.repository.UserRepository;
 import jakarta.websocket.RemoteEndpoint;
 import org.junit.jupiter.api.Assertions;
@@ -73,7 +74,7 @@ class UserServiceTest {
 
 
     @Test
-    @DisplayName("Should throw a expection if the UUID is null")
+    @DisplayName("Should throw an exception if the UUID was null")
     void findByIdButThrowEntityNotFoundExceptionIfUUIDIsNull() {
         UUID userId = null;
         var user = new User(userId, "vitor", "vitor@test.com", "testepassword", Integrated.TRUE, LocalDateTime.now());
@@ -105,7 +106,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Should insert a user in database and return true if is present")
+    @DisplayName("Should insert an user in database and return true if he's present")
     void insertUsers() {
         var id = UUID.randomUUID();
 
@@ -116,9 +117,9 @@ class UserServiceTest {
 
         var user = new User();
         user.setId(id);
-        user.setUsername("Vitor");
-        user.setPassword(encoder.encode("12345"));
-        user.setEmail("vitor@java.com");
+        user.setUsername(userRequest.getUsername());
+        user.setPassword(encoder.encode(userRequest.getPassword()));
+        user.setEmail(userRequest.getEmail());
         user.setLastModified(LocalDateTime.now());
 
         var userResponse = new UserResponseDto(
@@ -142,5 +143,35 @@ class UserServiceTest {
         var response = userRepository.findById(responseDto.getId());
 
         Assertions.assertTrue(response.isPresent());
+    }
+
+    @Test
+    @DisplayName("Should throw an exception if username, password or email are null")
+    void insertUsersButThrowExceptionIf() {
+        var id = UUID.randomUUID();
+
+        var userRequest = new UserRequestDto(
+                null,
+                "vitor@java.com",
+                "12345");
+
+        var user = new User();
+        user.setId(id);
+        user.setUsername(userRequest.getUsername());
+        user.setPassword(encoder.encode(userRequest.getPassword()));
+        user.setEmail(userRequest.getPassword());
+        user.setLastModified(LocalDateTime.now());
+
+        var userResponse = new UserResponseDto(
+                user.getId(),
+                user.getUsername(),
+                user.getPassword(),
+                user.getEmail(),
+                user.getLastModified(),
+                HttpStatus.CREATED,
+                HttpStatus.CREATED
+        );
+
+        Assertions.assertThrows(PasswordOrUsernameException.class, () -> { userService.insertUsers(userRequest); });
     }
 }
