@@ -3,7 +3,6 @@ package com.techv.vitor.controller;
 import com.techv.vitor.controller.dto.TicketRequestDto;
 import com.techv.vitor.controller.dto.TicketResponseDto;
 import com.techv.vitor.entity.Ticket;
-import com.techv.vitor.entity.User;
 import com.techv.vitor.exception.TicketNotFoundException;
 import com.techv.vitor.repository.TicketRepository;
 import com.techv.vitor.service.TicketService;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -61,4 +59,10 @@ public class TicketsController {
         return ResponseEntity.ok().body(response);
     }
 
+    @DeleteMapping("/delete/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<ResponseEntity<Void>> deleteTicketById(@PathVariable Long id) {
+        ticketService.deleteTicketById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
