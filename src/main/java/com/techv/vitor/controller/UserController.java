@@ -63,7 +63,7 @@ public class UserController {
         return ResponseEntity.ok().body(response);
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<ResponseEntity<Void>> deleteUserById(@RequestBody UUID id) {
         userService.deleteUser(id);
