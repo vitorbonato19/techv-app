@@ -1,6 +1,7 @@
 package com.techv.vitor.service;
 
 import com.techv.vitor.controller.dto.LoginRequest;
+import com.techv.vitor.controller.dto.LoginResponse;
 import com.techv.vitor.controller.dto.UserRequestDto;
 import com.techv.vitor.controller.dto.UserResponseDto;
 import com.techv.vitor.entity.User;
@@ -23,6 +24,7 @@ import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -40,6 +42,9 @@ class UserServiceTest {
 
     @Mock
     private PasswordEncoder encoder;
+
+    @Mock
+    private JwtEncoder jwtEncoder;
 
     @Mock
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -153,7 +158,20 @@ class UserServiceTest {
         user.setEmail(userRequest.getPassword());
         user.setLastModified(LocalDateTime.now());
 
-
         Assertions.assertThrows(PasswordOrUsernameException.class, () -> { userService.insertUsers(userRequest); });
+    }
+
+    @Test
+    @DisplayName("Should return a login response if login is ok")
+    void Login() {
+
+        var mock = new User(UUID.randomUUID(), "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
+        Mockito.when(userRepository.findByUsername(mock.getUsername())).thenReturn(Optional.of(mock));
+        var request = new LoginRequest("Vitor", "12345");
+        Mockito.when(encoder.matches(mock.getPassword(), request.getPassword())).thenReturn(Boolean.TRUE);
+        var response = userService.login(request);
+
+
+        Assertions.assertNotNull(response);
     }
 }

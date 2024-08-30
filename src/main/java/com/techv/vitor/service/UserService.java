@@ -100,11 +100,11 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<LoginResponse> login(LoginRequest loginRequest) {
+    public LoginResponse login(LoginRequest loginRequest) {
 
         var user = userRepository.findByUsername(loginRequest.getUsername());
 
-        if (user.isEmpty() || !verifyLogin(loginRequest, encoder)) {
+        if (user.isEmpty() || verifyLogin(loginRequest, encoder)) {
             throw new BadCredentialsException("user login is invalid...verify the login credentials.");
         }
 
@@ -126,7 +126,7 @@ public class UserService {
         response.setExpiresIn(expiresIn);
         response.setCreatedAt(now);
 
-        return ResponseEntity.ok().body(response);
+        return response;
     }
 
 

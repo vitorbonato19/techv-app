@@ -1,7 +1,5 @@
 package com.techv.vitor.controller.dto;
 
-import java.util.UUID;
-
 public class LoginRequest {
 
     private String username;
