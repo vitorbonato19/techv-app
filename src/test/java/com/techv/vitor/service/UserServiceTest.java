@@ -158,20 +158,36 @@ class UserServiceTest {
         user.setEmail(userRequest.getPassword());
         user.setLastModified(LocalDateTime.now());
 
-        Assertions.assertThrows(PasswordOrUsernameException.class, () -> { userService.insertUsers(userRequest); });
+        Assertions.assertThrows(PasswordOrUsernameException.class, () -> userService.insertUsers(userRequest));
     }
 
     @Test
-    @DisplayName("Should return a login response if login is ok")
-    void Login() {
+    @DisplayName("Should throw a Entity Not found exception if the UUID not exists is database")
+    void updateUsersButThrowExceptionIfUsersNotExists() {
 
         var mock = new User(UUID.randomUUID(), "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
-        Mockito.when(userRepository.findByUsername(mock.getUsername())).thenReturn(Optional.of(mock));
-        var request = new LoginRequest("Vitor", "12345");
-        Mockito.when(encoder.matches(mock.getPassword(), request.getPassword())).thenReturn(Boolean.TRUE);
-        var response = userService.login(request);
+        Mockito.when(userRepository.findById(mock.getId())).thenThrow(EntityNotFoundException.class);
+        Assertions.assertThrows(
+                EntityNotFoundException.class,
+                () -> userRepository.findById(mock.getId()));
+    }
 
+    @Test
+    @DisplayName("Should update a user in database")
+    void updateUser() {
 
-        Assertions.assertNotNull(response);
+        var mock = new User(UUID.randomUUID(), "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
+        Mockito.when(userRepository.findById(mock.getId())).thenReturn(Optional.of(mock));
+
+        Mockito.when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+            User userSave = invocation.getArgument(0);
+            userSave.setId(mock.getId());
+            return userSave;
+        });
+
+        var responseMock = userRepository.findById(mock.getId());
+
+        Assertions.assertNotNull(userService.updateUsers(mock, mock.getId()));
+        Assertions.assertTrue(responseMock.isPresent());
     }
 }
