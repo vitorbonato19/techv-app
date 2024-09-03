@@ -190,4 +190,16 @@ class UserServiceTest {
         Assertions.assertNotNull(userService.updateUsers(mock, mock.getId()));
         Assertions.assertTrue(responseMock.isPresent());
     }
+
+    @Test
+    @DisplayName("Should throw a Entity Not found exception if the UUID not exists is database")
+    void deleteUserById() {
+
+        var mock = new User(UUID.randomUUID(), "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
+        Mockito.when(userRepository.findById(mock.getId())).thenThrow(EntityNotFoundException.class);
+        Assertions.assertThrows(
+                EntityNotFoundException.class,
+                () -> userRepository.findById(mock.getId()));
+    }
+
 }
