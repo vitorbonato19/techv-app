@@ -1,17 +1,13 @@
 package com.techv.vitor.service;
 
 import com.techv.vitor.controller.dto.LoginRequest;
-import com.techv.vitor.controller.dto.LoginResponse;
 import com.techv.vitor.controller.dto.UserRequestDto;
-import com.techv.vitor.controller.dto.UserResponseDto;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.entity.enums.Integrated;
 import com.techv.vitor.exception.EntityNotFoundException;
 import com.techv.vitor.exception.PasswordOrUsernameException;
 import com.techv.vitor.repository.UserRepository;
-import jakarta.websocket.RemoteEndpoint;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,9 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
-import org.springframework.cglib.core.Local;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -177,24 +170,30 @@ class UserServiceTest {
     void updateUser() {
 
         var mock = new User(UUID.randomUUID(), "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
+        var newUser = new User(UUID.randomUUID(), "Vitor2", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
         Mockito.when(userRepository.findById(mock.getId())).thenReturn(Optional.of(mock));
+        Mockito.when(userRepository.findById(newUser.getId())).thenReturn(Optional.of(newUser));
 
         Mockito.when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
             User userSave = invocation.getArgument(0);
-            userSave.setId(mock.getId());
+            userSave.setId(newUser.getId());
             return userSave;
         });
 
         var responseMock = userRepository.findById(mock.getId());
+        var responseNewUser = userRepository.findById(newUser.getId());
 
-        Assertions.assertNotNull(userService.updateUsers(mock, mock.getId()));
+        Assertions.assertNotNull(userService.updateUsers(newUser, mock.getId()));
         Assertions.assertTrue(responseMock.isPresent());
+        Assertions.assertTrue(responseNewUser.isPresent());
+
+        Mockito.verify(userRepository, Mockito.times(1)).save(newUser);
+        
     }
 
     @Test
     @DisplayName("Should throw a Entity Not found exception if the UUID not exists is database")
     void deleteUserById() {
-
         var mock = new User(UUID.randomUUID(), "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
         Mockito.when(userRepository.findById(mock.getId())).thenThrow(EntityNotFoundException.class);
         Assertions.assertThrows(

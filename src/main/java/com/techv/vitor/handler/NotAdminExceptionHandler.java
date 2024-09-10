@@ -1,7 +1,6 @@
 package com.techv.vitor.handler;
 
 import com.techv.vitor.exception.NotAdminException;
-import com.techv.vitor.exception.TicketNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
