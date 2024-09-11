@@ -71,7 +71,7 @@ public class TicketService {
     }
 
     @Transactional
-    public TicketResponseDto agreeTicket(UUID userId, Long ticketId) {
+    public TicketResponseDto agreeTicket(Long userId, Long ticketId) {
 
         Ticket ticketResponse = new Ticket();
         User usernameResponse = new User();

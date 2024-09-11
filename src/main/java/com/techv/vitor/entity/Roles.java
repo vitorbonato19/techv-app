@@ -4,7 +4,7 @@ package com.techv.vitor.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "tb_roles")
+@Table(name = "roles")
 public class Roles {
 
     @Id

@@ -41,7 +41,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<User> findById(@PathVariable UUID id) {
+    public ResponseEntity<User> findById(@PathVariable Long id) {
         var clients = userService.findById(id);
         return ResponseEntity.ok().body(clients);
     }
@@ -65,14 +65,14 @@ public class UserController {
 
     @PutMapping("/update/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<UserResponseDto> updateUsers(@RequestBody User user, @PathVariable UUID id) {
+    public ResponseEntity<UserResponseDto> updateUsers(@RequestBody User user, @PathVariable Long id) {
         UserResponseDto response = userService.updateUsers(user, id);
         return ResponseEntity.ok().body(response);
     }
 
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<ResponseEntity<Void>> deleteUserById(@PathVariable UUID id) {
+    public ResponseEntity<ResponseEntity<Void>> deleteUserById(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

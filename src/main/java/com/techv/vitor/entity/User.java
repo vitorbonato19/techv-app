@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.techv.vitor.entity.enums.Integrated;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,18 +13,19 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "TB_USERS")
+@Table(name = "usuarios")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Nonnull
     private String username;
     @Nonnull
     private String email;
     @Nonnull
     private String password;
+
     private Integer integrated;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModified;
@@ -38,7 +40,7 @@ public class User {
 
     }
 
-    public User(UUID id, String username, String email, String password, Integrated integrated, LocalDateTime lastModified) {
+    public User(Long id, String username, String email, String password, Integrated integrated, LocalDateTime lastModified) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -47,11 +49,11 @@ public class User {
         this.lastModified = lastModified;
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

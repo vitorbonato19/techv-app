@@ -51,7 +51,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User findById(UUID id) {
+    public User findById(Long id) {
         Optional<User> user = userRepository.findById(id);
         return user.orElseThrow(
                 () -> new EntityNotFoundException("User not found...Verify the id:  " +
@@ -143,7 +143,7 @@ public class UserService {
 
 
     @Transactional
-    public UserResponseDto updateUsers(User user, UUID id) {
+    public UserResponseDto updateUsers(User user, Long id) {
 
         User newUser = findById(id);
         newUser.setUsername(user.getUsername());
@@ -167,7 +167,7 @@ public class UserService {
 
 
     @Transactional
-    public void deleteUser(UUID id) {
+    public void deleteUser(Long id) {
 
         var userResponse = userRepository.findById(id);
 

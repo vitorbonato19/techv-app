@@ -10,7 +10,7 @@ import java.util.UUID;
 @Component
 public class UserResponseDto {
 
-    private UUID id;
+    private Long id;
 
     private HttpStatus status;
 
@@ -29,7 +29,7 @@ public class UserResponseDto {
 
     }
 
-    public UserResponseDto(UUID id, String username, String password, String email, LocalDateTime lastModified, HttpStatus status, HttpStatus statusCode) {
+    public UserResponseDto(Long id, String username, String password, String email, LocalDateTime lastModified, HttpStatus status, HttpStatus statusCode) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -63,11 +63,11 @@ public class UserResponseDto {
         this.lastModified = lastModified;
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

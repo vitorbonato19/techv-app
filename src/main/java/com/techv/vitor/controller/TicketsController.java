@@ -54,8 +54,8 @@ public class TicketsController {
 
     @PutMapping("/agree/{userUUID}/{ticketId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<TicketResponseDto> agreeTicket(@PathVariable UUID userUUID, @PathVariable Long ticketId) {
-        var response = ticketService.agreeTicket(userUUID, ticketId);
+    public ResponseEntity<TicketResponseDto> agreeTicket(@PathVariable Long userId, @PathVariable Long ticketId) {
+        var response = ticketService.agreeTicket(userId, ticketId);
         return ResponseEntity.ok().body(response);
     }
 
