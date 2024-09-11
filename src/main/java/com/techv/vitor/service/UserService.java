@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,6 +37,8 @@ public class UserService {
     private final BCryptPasswordEncoder encoder;
 
     private final JwtEncoder jwtEncoder;
+
+    private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public UserService(UserRepository userRepository,
                        TicketRepository ticketRepository,

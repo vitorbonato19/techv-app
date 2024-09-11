@@ -10,6 +10,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 
@@ -43,6 +44,7 @@ public class AdminInsert implements CommandLineRunner {
                     user.setPassword(bCryptPasswordEncoder.encode("admin"));
                     user.setRoles(Set.of(role));
                     user.setEmail("admin@admin.com");
+                    user.setLastModified(LocalDateTime.now());
                     userRepository.save(user);
                 }
         );
