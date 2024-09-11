@@ -41,7 +41,7 @@ public class Roles {
     public enum Values {
 
         ADMIN(1L),
-        NOT_ADMIN(0L);
+        NOT_ADMIN(2L);
 
         long roleId;
 

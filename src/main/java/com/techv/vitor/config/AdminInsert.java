@@ -41,7 +41,7 @@ public class AdminInsert implements CommandLineRunner {
                     User user = new User();
                     user.setUsername("admin");
                     user.setPassword(bCryptPasswordEncoder.encode("admin"));
-                    //user.setRoles();
+                    user.setRoles(Set.of(role));
                     user.setEmail("admin@admin.com");
                     userRepository.save(user);
                 }
