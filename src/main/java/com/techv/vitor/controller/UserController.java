@@ -5,6 +5,7 @@ import com.techv.vitor.controller.dto.LoginResponse;
 import com.techv.vitor.controller.dto.UserRequestDto;
 import com.techv.vitor.controller.dto.UserResponseDto;
 import com.techv.vitor.entity.Cep;
+import com.techv.vitor.entity.Data;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -34,39 +35,44 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<User>> findAll() {
+    public ResponseEntity<Data<List<User>>> findAll() {
         var clients = userService.findAll();
-        return ResponseEntity.ok().body(clients);
+        var response = new Data<>(clients);
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<User> findById(@PathVariable Long id) {
+    public ResponseEntity<Data<User>> findById(@PathVariable Long id) {
         var clients = userService.findById(id);
-        return ResponseEntity.ok().body(clients);
+        var response = new Data<>(clients);
+        return ResponseEntity.ok().body(response);
     }
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        var response = userService.login(loginRequest);
+    public ResponseEntity<Data<LoginResponse>> userLogin(@RequestBody LoginRequest loginRequest) {
+        var login = userService.login(loginRequest);
+        var response = new Data<>(login);
         return ResponseEntity.ok().body(response);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UserResponseDto> insertUsers(@RequestBody UserRequestDto requestDto) {
-        UserResponseDto response = userService.insertUsers(requestDto);
+    public ResponseEntity<Data<UserResponseDto>> insertUsers(@RequestBody UserRequestDto requestDto) {
+        UserResponseDto dtoResponse = userService.insertUsers(requestDto);
+        var response = new Data<>(dtoResponse);
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(response.getId())
+                .buildAndExpand(dtoResponse.getId())
                 .toUri()).body(response);
     }
 
     @PutMapping("/update/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<UserResponseDto> updateUsers(@RequestBody User user, @PathVariable Long id) {
-        UserResponseDto response = userService.updateUsers(user, id);
+    public ResponseEntity<Data<UserResponseDto>> updateUsers(@RequestBody User user, @PathVariable Long id) {
+        UserResponseDto dtoResponse = userService.updateUsers(user, id);
+        var response = new Data<>(dtoResponse);
         return ResponseEntity.ok().body(response);
     }
 
