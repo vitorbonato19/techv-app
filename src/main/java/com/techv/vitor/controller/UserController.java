@@ -4,6 +4,7 @@ import com.techv.vitor.controller.dto.LoginRequest;
 import com.techv.vitor.controller.dto.LoginResponse;
 import com.techv.vitor.controller.dto.UserRequestDto;
 import com.techv.vitor.controller.dto.UserResponseDto;
+import com.techv.vitor.entity.Cep;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users")

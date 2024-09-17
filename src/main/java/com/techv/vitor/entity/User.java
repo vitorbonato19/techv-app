@@ -2,18 +2,8 @@ package com.techv.vitor.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.techv.vitor.entity.enums.Integrated;
-import jakarta.annotation.Nonnull;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,13 +17,15 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Nonnull
+    @NotBlank
     private String username;
-    @Nonnull
+    @NotBlank
     private String email;
-    @Nonnull
+    @NotBlank
     private String password;
-
+//    @NotBlank
+//    @OneToMany(mappedBy = "userCep")
+//    private Cep cep;
     private Integer integrated;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModified;
@@ -48,13 +40,18 @@ public class User {
 
     }
 
-    public User(Long id, String username, String email, String password, Integrated integrated, LocalDateTime lastModified) {
+    public User(Long id, String username, String email, String password, Integrated integrated,LocalDateTime lastModified) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
         setIntegrated(integrated);
         this.lastModified = lastModified;
+    }
+
+
+    public void setIntegrated(Integer integrated) {
+        this.integrated = integrated;
     }
 
     public Long getId() {

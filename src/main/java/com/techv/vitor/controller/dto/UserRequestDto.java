@@ -5,15 +5,25 @@ public class UserRequestDto {
     private String username;
     private String email;
     private String password;
+    private String cep;
 
     public UserRequestDto() {
 
     }
 
-    public UserRequestDto(String username, String email, String password) {
+    public UserRequestDto(String username, String email, String password, String cep) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.cep = cep;
+    }
+
+    public String getCep() {
+        return cep;
+    }
+
+    public void setCep(String cep) {
+        this.cep = cep;
     }
 
     public String getUsername() {

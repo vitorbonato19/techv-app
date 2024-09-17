@@ -8,7 +8,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: none
-    show-sql: true
+    show-sql: false
 jwt:
   public:
     key: classpath:public_key

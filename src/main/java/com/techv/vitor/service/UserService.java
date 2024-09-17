@@ -4,12 +4,16 @@ import com.techv.vitor.controller.dto.LoginRequest;
 import com.techv.vitor.controller.dto.LoginResponse;
 import com.techv.vitor.controller.dto.UserRequestDto;
 import com.techv.vitor.controller.dto.UserResponseDto;
+import com.techv.vitor.entity.Cep;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.exception.EntityNotFoundException;
 import com.techv.vitor.exception.PasswordOrUsernameException;
 import com.techv.vitor.repository.TicketRepository;
 import com.techv.vitor.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.apache.coyote.Response;
+import org.apache.tomcat.util.http.parser.HttpParser;
+import org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,13 +23,16 @@ import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class UserService {
@@ -62,18 +69,35 @@ public class UserService {
         );
     }
 
+    public Cep getCep(String cep) {
+
+        RestTemplate restTemplate = new RestTemplate();
+        var url = "https://opencep.com/v1/" + cep;
+
+        ResponseEntity<Cep> response = restTemplate.getForEntity(url, Cep.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return response.getBody();
+        } else {
+            throw new BadCredentialsException("invalid cep...verify the cep...");
+        }
+    }
+
     @Transactional
     public UserResponseDto insertUsers(UserRequestDto requestDto) {
 
-        if (requestDto.getUsername() == null ||
-                requestDto.getPassword() == null ||
-                    requestDto.getEmail() == null) {
-            throw new PasswordOrUsernameException(
-                    "Existing fields that can't be null...",
-                    HttpStatus.PRECONDITION_FAILED);
-        }
-
         try {
+
+            if (requestDto.getUsername() == null ||
+                    requestDto.getPassword() == null ||
+                    requestDto.getEmail() == null ||
+                    requestDto.getCep() == null) {
+                throw new PasswordOrUsernameException(
+                        "Existing fields that can't be null...",
+                        HttpStatus.PRECONDITION_FAILED);
+            }
+
+            var getCep = getCep(requestDto.getCep());
 
             User user = new User();
 
@@ -93,6 +117,7 @@ public class UserService {
             responseDto.setLastModified(LocalDateTime.now());
             responseDto.setStatus(HttpStatus.CREATED);
             responseDto.setStatusCode(HttpStatus.CREATED);
+            responseDto.setCep(getCep);
 
             return responseDto;
 
