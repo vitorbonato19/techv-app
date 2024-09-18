@@ -41,19 +41,15 @@ public class UserService {
 
     private final TicketRepository ticketRepository;
 
-    private final BCryptPasswordEncoder encoder;
-
     private final JwtEncoder jwtEncoder;
 
     private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public UserService(UserRepository userRepository,
                        TicketRepository ticketRepository,
-                       BCryptPasswordEncoder encoder,
                        JwtEncoder jwtEncoder) {
         this.userRepository = userRepository;
         this.ticketRepository = ticketRepository;
-        this.encoder = encoder;
         this.jwtEncoder = jwtEncoder;
     }
 
@@ -102,7 +98,7 @@ public class UserService {
             User user = new User();
 
             user.setUsername(requestDto.getUsername());
-            user.setPassword(encoder.encode(requestDto.getPassword()));
+            user.setPassword(requestDto.getPassword());
             user.setEmail(requestDto.getEmail());
             user.setLastModified(LocalDateTime.now());
 
@@ -132,7 +128,7 @@ public class UserService {
 
         var user = userRepository.findByUsername(loginRequest.getUsername());
 
-        if (user.isEmpty() || verifyLogin(loginRequest, encoder)) {
+        if (user.isEmpty() || verifyLogin(loginRequest)) {
             throw new BadCredentialsException("user login is invalid...verify the login credentials.");
         }
 
@@ -159,14 +155,15 @@ public class UserService {
 
 
     @Transactional
-    public Boolean verifyLogin(LoginRequest loginRequest, PasswordEncoder encoder) {
+    public Boolean verifyLogin(LoginRequest loginRequest) {
         var user = userRepository.findByUsername(loginRequest.getUsername())
                 .orElseThrow(
                         () -> new EntityNotFoundException("User not found...Verify the username: " +
                                 loginRequest.getUsername(),
                                 HttpStatus.NOT_FOUND)
                 );
-        return encoder.matches(loginRequest.getPassword(), user.getPassword());
+        var responseBool = loginRequest.getPassword() == user.getPassword() ? true : false;
+        return responseBool;
     }
 
 

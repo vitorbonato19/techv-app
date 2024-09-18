@@ -83,8 +83,8 @@ class UserServiceTest {
         User mock = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
         Mockito.when(userRepository.findByUsername(mock.getUsername())).thenReturn(Optional.of(mock));
         var request = new LoginRequest("Vitor", "12345");
-        Mockito.when(encoder.matches(mock.getPassword(), request.getPassword())).thenReturn(true);
-        var response = userService.verifyLogin(request, encoder);
+        Mockito.when(userService.verifyLogin(request)).thenReturn(true);
+        var response = userService.verifyLogin(request);
 
         Assertions.assertTrue(response);
     }
@@ -95,8 +95,8 @@ class UserServiceTest {
         User mock = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
         Mockito.when(userRepository.findByUsername(mock.getUsername())).thenReturn(Optional.of(mock));
         var request = new LoginRequest("Vitor", "12345");
-        Mockito.when(encoder.matches(mock.getPassword(), request.getPassword())).thenReturn(false);
-        var response = userService.verifyLogin(request, encoder);
+        Mockito.when(userService.verifyLogin(request)).thenReturn(false);
+        var response = userService.verifyLogin(request);
 
         Assertions.assertFalse(response);
     }

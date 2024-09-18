@@ -34,16 +34,16 @@ public class AdminInsert implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         var role = roleRepository.findByName(Roles.Values.ADMIN.name());
-        Optional<User> userAdmin = userRepository.findByUsername("admin");
+        Optional<User> userAdmin = userRepository.findByUsername("TI");
 
         userAdmin.ifPresentOrElse(
                 user -> System.out.println("admin already exists!"),
                 () -> {
                     User user = new User();
-                    user.setUsername("admin");
-                    user.setPassword(bCryptPasswordEncoder.encode("admin"));
+                    user.setUsername("TI");
+                    user.setPassword("petcamp");
                     user.setRoles(Set.of(role));
-                    user.setEmail("admin@admin.com");
+                    user.setEmail("vitor.camargo@petcamp.com.br");
                     user.setLastModified(LocalDateTime.now());
                     userRepository.save(user);
                 }
