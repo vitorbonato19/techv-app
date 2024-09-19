@@ -10,13 +10,11 @@ public class ApplicationConfig {
 
     @Bean
     public Data data() {
-        var data = new Data();
-        return data;
+        return new Data();
     }
 
     @Bean
     public HttpHeaders headers() {
-        var headers = new HttpHeaders();
-        return headers;
+        return new HttpHeaders();
     }
 }

@@ -5,51 +5,55 @@ import com.techv.vitor.controller.dto.LoginResponse;
 import com.techv.vitor.controller.dto.UserRequestDto;
 import com.techv.vitor.controller.dto.UserResponseDto;
 import com.techv.vitor.entity.Cep;
+import com.techv.vitor.entity.Roles;
+import com.techv.vitor.entity.Sector;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.exception.EntityNotFoundException;
 import com.techv.vitor.exception.PasswordOrUsernameException;
+import com.techv.vitor.repository.RoleRepository;
+import com.techv.vitor.repository.SectorRepository;
 import com.techv.vitor.repository.TicketRepository;
 import com.techv.vitor.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.apache.coyote.Response;
-import org.apache.tomcat.util.http.parser.HttpParser;
-import org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
 
+    private final RoleRepository roleRepository;
+
     private final TicketRepository ticketRepository;
 
+    private final SectorRepository sectorRepository;
+
     private final JwtEncoder jwtEncoder;
+
 
     private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public UserService(UserRepository userRepository,
-                       TicketRepository ticketRepository,
-                       JwtEncoder jwtEncoder) {
+                       RoleRepository roleRepository, TicketRepository ticketRepository,
+                       SectorRepository sectorRepository, JwtEncoder jwtEncoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.ticketRepository = ticketRepository;
+        this.sectorRepository = sectorRepository;
         this.jwtEncoder = jwtEncoder;
     }
 
@@ -94,6 +98,8 @@ public class UserService {
             }
 
             var getCep = getCep(requestDto.getCep());
+            var role = roleRepository.findByName(Roles.Values.NOT_ADMIN.name());
+            var sector = sectorRepository.findByName(Sector.Values.TI.name());
 
             User user = new User();
 
@@ -101,6 +107,8 @@ public class UserService {
             user.setPassword(requestDto.getPassword());
             user.setEmail(requestDto.getEmail());
             user.setLastModified(LocalDateTime.now());
+            user.setSector(Set.of(sector));
+            user.setRoles(Set.of(role));
 
             userRepository.save(user);
 

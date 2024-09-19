@@ -1,6 +1,5 @@
 package com.techv.vitor.handler;
 
-import com.techv.vitor.exception.EntityNotFoundException;
 import com.techv.vitor.exception.TicketNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;

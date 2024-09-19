@@ -1,7 +1,5 @@
 package com.techv.vitor.entity;
 
-import jakarta.persistence.ManyToOne;
-
 public class Cep {
 
     private String cep;

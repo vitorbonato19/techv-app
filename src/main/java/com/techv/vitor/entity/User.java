@@ -32,6 +32,8 @@ public class User {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "usersroles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Roles> roles;
+    @JoinTable(name = "user_sector", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "sector_id"))
+    private Set<Sector> sector;
 
     @OneToMany(mappedBy = "users")
     private List<Ticket> tickets;
@@ -40,15 +42,23 @@ public class User {
 
     }
 
-    public User(Long id, String username, String email, String password, Integrated integrated,LocalDateTime lastModified) {
+    public User(Long id, String username, String email, String password, Integrated integrated, LocalDateTime lastModified, Set<Sector> sector) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
+        this.sector = sector;
         setIntegrated(integrated);
         this.lastModified = lastModified;
     }
 
+    public Set<Sector> getSector() {
+        return sector;
+    }
+
+    public void setSector(Set<Sector> sector) {
+        this.sector = sector;
+    }
 
     public void setIntegrated(Integer integrated) {
         this.integrated = integrated;

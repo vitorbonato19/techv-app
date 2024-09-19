@@ -7,7 +7,6 @@ import com.techv.vitor.controller.dto.UserResponseDto;
 import com.techv.vitor.entity.Data;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.service.UserService;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

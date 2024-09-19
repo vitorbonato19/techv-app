@@ -1,6 +1,5 @@
 package com.techv.vitor.entity;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 
 import java.util.HashMap;

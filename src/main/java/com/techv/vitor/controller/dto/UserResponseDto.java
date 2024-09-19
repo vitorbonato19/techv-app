@@ -1,7 +1,7 @@
 package com.techv.vitor.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.techv.vitor.entity.Cep;
+import com.techv.vitor.entity.Sector;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +24,8 @@ public class UserResponseDto {
 
     private com.techv.vitor.entity.Cep Cep;
 
+    private Sector sector;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModified;
 
@@ -31,7 +33,7 @@ public class UserResponseDto {
 
     }
 
-    public UserResponseDto(Long id, String username, String password, String email, LocalDateTime lastModified, HttpStatus status, HttpStatus statusCode, com.techv.vitor.entity.Cep cep) {
+    public UserResponseDto(Long id, String username, String password, String email, LocalDateTime lastModified, HttpStatus status, HttpStatus statusCode, com.techv.vitor.entity.Cep cep, Sector sector) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -40,6 +42,15 @@ public class UserResponseDto {
         this.status = status;
         this.statusCode = statusCode;
         Cep = cep;
+        this.sector = sector;
+    }
+
+    public Sector getSector() {
+        return sector;
+    }
+
+    public void setSector(Sector sector) {
+        this.sector = sector;
     }
 
     public com.techv.vitor.entity.Cep getCep() {

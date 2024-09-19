@@ -1,5 +1,7 @@
 package com.techv.vitor.controller.dto;
 
+import com.techv.vitor.entity.Sector;
+
 public class UserRequestDto {
 
     private String username;
