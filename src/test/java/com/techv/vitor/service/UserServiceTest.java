@@ -56,8 +56,7 @@ class UserServiceTest {
     @Test
     @DisplayName("Should return a list of users")
     void findAll() {
-        var sector = sectorRepository.findByName(Sector.Values.ECOMMERCE.name());
-        User user = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now(), Set.of(sector));
+        User user = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
         Mockito.when(userService.findAll()).thenReturn(Collections.singletonList(new User()));
         List<User> users = userService.findAll();
 
@@ -68,8 +67,7 @@ class UserServiceTest {
     @Test
     @DisplayName("Should return an user by the id passed")
     void findById() {
-        var sector = sectorRepository.findByName(Sector.Values.ECOMMERCE.name());
-        User user = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now(), Set.of(sector));
+        User user = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
         Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         Optional<User> userResponse = userRepository.findById(user.getId());
 
@@ -80,16 +78,15 @@ class UserServiceTest {
     @Test
     @DisplayName("Should throw an exception if the UUID was null")
     void findByIdButThrowEntityNotFoundExceptionIfUUIDIsNull() {
-        var sector = sectorRepository.findByName(Sector.Values.ECOMMERCE.name());
-        User user = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now(), Set.of(sector));
+
+        User user = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
         Assertions.assertThrows(EntityNotFoundException.class, () -> userService.findById(null));
     }
 
     @Test
     @DisplayName("Should return true when password login are equals from the encoded user password")
     void verifiyLoginButshouldReturnTrueWhenLoginIsOk() {
-        var sector = sectorRepository.findByName(Sector.Values.ECOMMERCE.name());
-        User mock = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now(), Set.of(sector));
+        User mock = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
         Mockito.when(userRepository.findByUsername(mock.getUsername())).thenReturn(Optional.of(mock));
         var request = new LoginRequest("Vitor", "12345");
         Mockito.when(userService.verifyLogin(request)).thenReturn(true);
@@ -101,8 +98,7 @@ class UserServiceTest {
     @Test
     @DisplayName("Should return false when password login are different from the encoded user password")
     void verifiyLoginButshouldReturnFalseWhenPasswordLoginNotMatches() {
-        var sector = sectorRepository.findByName(Sector.Values.ECOMMERCE.name());
-        User mock = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now(), Set.of(sector));
+        User mock = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
         Mockito.when(userRepository.findByUsername(mock.getUsername())).thenReturn(Optional.of(mock));
         var request = new LoginRequest("Vitor", "12345");
         Mockito.when(userService.verifyLogin(request)).thenReturn(false);
@@ -166,7 +162,7 @@ class UserServiceTest {
     @DisplayName("Should throw a Entity Not found exception if the UUID not exists is database")
     void updateUsersButThrowExceptionIfUsersNotExists() {
         var sector = sectorRepository.findByName(Sector.Values.ECOMMERCE.name());
-        User mock = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now(), Set.of(sector));
+        User mock = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
         Mockito.when(userRepository.findById(mock.getId())).thenThrow(EntityNotFoundException.class);
         Assertions.assertThrows(
                 EntityNotFoundException.class,
@@ -176,9 +172,9 @@ class UserServiceTest {
     @Test
     @DisplayName("Should update a user in database")
     void updateUser() {
-        var sector = sectorRepository.findByName(Sector.Values.ECOMMERCE.name());
-        var mock = new User(1L, "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now(), Set.of(sector));
-        var newUser = new User(2L, "Vitor2", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now(), Set.of(sector));
+
+        var mock = new User(1L, "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
+        var newUser = new User(2L, "Vitor2", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
         Mockito.when(userRepository.findById(mock.getId())).thenReturn(Optional.of(mock));
         Mockito.when(userRepository.findById(newUser.getId())).thenReturn(Optional.of(newUser));
 
@@ -202,8 +198,7 @@ class UserServiceTest {
     @Test
     @DisplayName("Should throw a Entity Not found exception if the UUID not exists is database")
     void deleteUserById() {
-        var sector = sectorRepository.findByName(Sector.Values.ECOMMERCE.name());
-        var mock = new User(1L, "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now(), Set.of(sector));
+        var mock = new User(1L, "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
         Mockito.when(userRepository.findById(mock.getId())).thenThrow(EntityNotFoundException.class);
         Assertions.assertThrows(
                 EntityNotFoundException.class,

@@ -23,15 +23,16 @@ public class User {
     private String email;
     @NotBlank
     private String password;
-//    @NotBlank
-//    @OneToMany(mappedBy = "userCep")
-//    private Cep cep;
+    @NotBlank
+    @OneToOne
+    private Cep cep;
     private Integer integrated;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModified;
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "usersroles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Roles> roles;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "user_sector", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "sector_id"))
     private Set<Sector> sector;
 
@@ -42,12 +43,11 @@ public class User {
 
     }
 
-    public User(Long id, String username, String email, String password, Integrated integrated, LocalDateTime lastModified, Set<Sector> sector) {
+    public User(Long id, String username, String email, String password, Integrated integrated, LocalDateTime lastModified) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
-        this.sector = sector;
         setIntegrated(integrated);
         this.lastModified = lastModified;
     }

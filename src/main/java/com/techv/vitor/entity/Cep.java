@@ -1,7 +1,16 @@
 package com.techv.vitor.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Cep {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long cepId;
     private String cep;
     private String logradouro;
     private String complemento;
@@ -10,14 +19,12 @@ public class Cep {
     private String uf;
     private String ibge;
 
-//    @ManyToOne
-//    private User userCep;
-
     public Cep() {
 
     }
 
-    public Cep(String cep, String logradouro, String complemento, String bairro, String localidade, String uf, String ibge) {
+    public Cep(Long cepId, String cep, String logradouro, String complemento, String bairro, String localidade, String uf, String ibge) {
+        this.cepId = cepId;
         this.cep = cep;
         this.logradouro = logradouro;
         this.complemento = complemento;
@@ -25,6 +32,14 @@ public class Cep {
         this.localidade = localidade;
         this.uf = uf;
         this.ibge = ibge;
+    }
+
+    public Long getCepId() {
+        return cepId;
+    }
+
+    public void setCepId(Long cepId) {
+        this.cepId = cepId;
     }
 
     public String getCep() {

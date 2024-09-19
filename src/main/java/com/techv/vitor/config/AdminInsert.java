@@ -2,8 +2,10 @@ package com.techv.vitor.config;
 
 
 import com.techv.vitor.entity.Roles;
+import com.techv.vitor.entity.Sector;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.repository.RoleRepository;
+import com.techv.vitor.repository.SectorRepository;
 import com.techv.vitor.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.boot.CommandLineRunner;
@@ -21,11 +23,14 @@ public class AdminInsert implements CommandLineRunner {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    private final SectorRepository sectorRepository;
+
     private final RoleRepository roleRepository;
 
-    public AdminInsert(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository) {
+    public AdminInsert(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, SectorRepository sectorRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.sectorRepository = sectorRepository;
         this.roleRepository = roleRepository;
     }
 
@@ -34,6 +39,7 @@ public class AdminInsert implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         var role = roleRepository.findByName(Roles.Values.ADMIN.name());
+        var sector = sectorRepository.findByName(Sector.Values.TI.name());
         Optional<User> userAdmin = userRepository.findByUsername("TI");
 
         userAdmin.ifPresentOrElse(
@@ -44,6 +50,7 @@ public class AdminInsert implements CommandLineRunner {
                     user.setPassword("petcamp");
                     user.setRoles(Set.of(role));
                     user.setEmail("vitor.camargo@petcamp.com.br");
+                    user.setSector(Set.of(sector));
                     user.setLastModified(LocalDateTime.now());
                     userRepository.save(user);
                 }
