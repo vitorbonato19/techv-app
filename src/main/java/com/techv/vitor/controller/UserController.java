@@ -35,7 +35,7 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public ResponseEntity<Data<List<User>>> findAll() {
         var clients = userService.findAll();
         headers.setContentType(MediaType.APPLICATION_JSON);

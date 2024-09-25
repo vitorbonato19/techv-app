@@ -137,17 +137,20 @@ public class UserService {
         var user = userRepository.findByUsername(loginRequest.getUsername());
 
         if (user.isEmpty() || !verifyLogin(loginRequest)) {
-            throw new BadCredentialsException("Invalid Credentials.");
+            throw new EntityNotFoundException("Credenciais invalidas.", HttpStatus.FORBIDDEN);
         }
 
         Instant now = Instant.now();
         Long expiresIn = 150L;
+
+        var admin = userRepository.findAdmin(user.get().getId());
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("api.java")
                 .subject(user.get().getId().toString())
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expiresIn))
+                .claim("scope", admin)
                 .build();
 
         var jwtValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
