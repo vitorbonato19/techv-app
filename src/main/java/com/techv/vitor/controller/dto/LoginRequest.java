@@ -1,5 +1,7 @@
 package com.techv.vitor.controller.dto;
 
+import java.util.Objects;
+
 public class LoginRequest {
 
     private String username;
@@ -28,5 +30,18 @@ public class LoginRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LoginRequest that = (LoginRequest) o;
+        return Objects.equals(password, that.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(password);
     }
 }

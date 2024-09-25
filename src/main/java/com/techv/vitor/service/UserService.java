@@ -136,8 +136,8 @@ public class UserService {
 
         var user = userRepository.findByUsername(loginRequest.getUsername());
 
-        if (user.isEmpty() || verifyLogin(loginRequest)) {
-            throw new BadCredentialsException("user login is invalid...verify the login credentials.");
+        if (user.isEmpty() || !verifyLogin(loginRequest)) {
+            throw new BadCredentialsException("Invalid Credentials.");
         }
 
         Instant now = Instant.now();
@@ -170,7 +170,7 @@ public class UserService {
                                 loginRequest.getUsername(),
                                 HttpStatus.NOT_FOUND)
                 );
-        var responseBool = loginRequest.getPassword() == user.getPassword() ? true : false;
+        var responseBool = loginRequest.getPassword().equals(user.getPassword()) ? true : false;
         return responseBool;
     }
 

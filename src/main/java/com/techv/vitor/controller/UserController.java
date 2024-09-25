@@ -11,13 +11,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -34,6 +35,7 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Data<List<User>>> findAll() {
         var clients = userService.findAll();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -56,15 +58,15 @@ public class UserController {
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Data<LoginResponse>> userLogin(@RequestBody LoginRequest loginRequest) {
-        var login = userService.login(loginRequest);
+        var responseLogin = userService.login(loginRequest);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("issuer", "api-techv.java");
         headers.setDate(Instant.now());
         var headerData = data.convertToMap(headers);
-        var response = new Data<>(login, headerData);
+        var response = new Data<>(responseLogin, headerData);
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
     }
 
