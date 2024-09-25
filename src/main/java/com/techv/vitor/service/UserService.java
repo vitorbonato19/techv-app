@@ -173,8 +173,7 @@ public class UserService {
                                 loginRequest.getUsername(),
                                 HttpStatus.NOT_FOUND)
                 );
-        var responseBool = loginRequest.getPassword().equals(user.getPassword()) ? true : false;
-        return responseBool;
+        return loginRequest.getPassword().equals(user.getPassword()) ? true : false;
     }
 
 
