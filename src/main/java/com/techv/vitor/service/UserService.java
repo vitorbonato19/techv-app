@@ -153,11 +153,11 @@ public class UserService {
                 .claim("scope", admin)
                 .build();
 
-        var jwtValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        var jwt = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
         var response = new LoginResponse();
 
-        response.setAccessToken(jwtValue);
+        response.setAccessToken(jwt);
         response.setExpiresIn(expiresIn);
         response.setCreatedAt(now);
 
