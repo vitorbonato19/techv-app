@@ -21,6 +21,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -57,7 +58,7 @@ public class UserService {
         this.jwtEncoder = jwtEncoder;
     }
 
-    public List<User> findAll() {
+    public List<User> findAll(JwtAuthenticationToken token) {
         return userRepository.findAll();
     }
 
@@ -84,7 +85,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto insertUsers(UserRequestDto requestDto) {
+    public UserResponseDto insertUsers(UserRequestDto requestDto, JwtAuthenticationToken token) {
 
         try {
 
@@ -178,7 +179,7 @@ public class UserService {
 
 
     @Transactional
-    public UserResponseDto updateUsers(User user, Long id) {
+    public UserResponseDto updateUsers(User user, Long id , JwtAuthenticationToken token) {
 
         User newUser = findById(id);
         newUser.setUsername(user.getUsername());
@@ -202,7 +203,7 @@ public class UserService {
 
 
     @Transactional
-    public void deleteUser(Long id) {
+    public void deleteUser(Long id, JwtAuthenticationToken token) {
 
         var userResponse = userRepository.findById(id);
 
@@ -212,4 +213,5 @@ public class UserService {
 
         userRepository.deleteById(id);
     }
+
 }

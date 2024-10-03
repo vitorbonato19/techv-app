@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -37,6 +38,9 @@ class UserServiceTest {
 
     @Mock
     private PasswordEncoder encoder;
+
+    @Mock
+    JwtAuthenticationToken token;
 
     @Mock
     private JwtEncoder jwtEncoder;
@@ -57,8 +61,8 @@ class UserServiceTest {
     @DisplayName("Should return a list of users")
     void findAll() {
         User user = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
-        Mockito.when(userService.findAll()).thenReturn(Collections.singletonList(new User()));
-        List<User> users = userService.findAll();
+        Mockito.when(userService.findAll(token)).thenReturn(Collections.singletonList(new User()));
+        List<User> users = userService.findAll(token);
 
         Assertions.assertEquals(1, users.size());
     }
@@ -132,7 +136,7 @@ class UserServiceTest {
         });
         Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
-        var responseDto = userService.insertUsers(userRequest);
+        var responseDto = userService.insertUsers(userRequest, token);
         var response = userRepository.findById(responseDto.getId());
 
         Assertions.assertTrue(response.isPresent());
@@ -155,7 +159,7 @@ class UserServiceTest {
         user.setEmail(userRequest.getPassword());
         user.setLastModified(LocalDateTime.now());
 
-        Assertions.assertThrows(PasswordOrUsernameException.class, () -> userService.insertUsers(userRequest));
+        Assertions.assertThrows(PasswordOrUsernameException.class, () -> userService.insertUsers(userRequest, token));
     }
 
     @Test
@@ -187,7 +191,7 @@ class UserServiceTest {
         var responseMock = userRepository.findById(mock.getId());
         var responseNewUser = userRepository.findById(newUser.getId());
 
-        Assertions.assertNotNull(userService.updateUsers(newUser, mock.getId()));
+        Assertions.assertNotNull(userService.updateUsers(newUser, mock.getId(), token));
         Assertions.assertTrue(responseMock.isPresent());
         Assertions.assertTrue(responseNewUser.isPresent());
 

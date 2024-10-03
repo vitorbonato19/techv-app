@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -36,8 +37,8 @@ public class UserController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    public ResponseEntity<Data<List<User>>> findAll() {
-        var clients = userService.findAll();
+    public ResponseEntity<Data<List<User>>> findAll(JwtAuthenticationToken token) {
+        var clients = userService.findAll(token);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("issuer", "api-techv.java");
         headers.setDate(Instant.now());
@@ -72,8 +73,8 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Data<UserResponseDto>> insertUsers(@RequestBody UserRequestDto requestDto) {
-        UserResponseDto dtoResponse = userService.insertUsers(requestDto);
+    public ResponseEntity<Data<UserResponseDto>> insertUsers(@RequestBody UserRequestDto requestDto, JwtAuthenticationToken token) {
+        UserResponseDto dtoResponse = userService.insertUsers(requestDto, token);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("issuer", "api-techv.java");
         headers.add("userId", "" + dtoResponse.getId());
@@ -85,8 +86,8 @@ public class UserController {
 
     @PutMapping("/update/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Data<UserResponseDto>> updateUsers(@RequestBody User user, @PathVariable Long id) {
-        UserResponseDto dtoResponse = userService.updateUsers(user, id);
+    public ResponseEntity<Data<UserResponseDto>> updateUsers(@RequestBody User user, @PathVariable Long id, JwtAuthenticationToken token) {
+        UserResponseDto dtoResponse = userService.updateUsers(user, id, token);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("issuer", "api-techv.java");
         headers.setDate(Instant.now());
@@ -97,8 +98,8 @@ public class UserController {
 
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<ResponseEntity<Void>> deleteUserById(@PathVariable Long id) {
-        userService.deleteUser(id);
+    public ResponseEntity<ResponseEntity<Void>> deleteUserById(@PathVariable Long id, JwtAuthenticationToken token) {
+        userService.deleteUser(id, token);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("issuer", "api-techv.java");
         headers.setDate(Instant.now());
