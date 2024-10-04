@@ -12,6 +12,7 @@ import com.techv.vitor.exception.TicketNotFoundException;
 import com.techv.vitor.repository.TicketRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,17 +30,17 @@ public class TicketService {
         this.userService = userService;
     }
 
-    public List<Ticket> findAll() {
+    public List<Ticket> findAll(JwtAuthenticationToken token) {
         return ticketRepository.findAll();
     }
 
-    public Ticket findById(Long id) {
+    public Ticket findById(Long id, JwtAuthenticationToken token) {
         return ticketRepository.findById(id)
                 .orElseThrow(() -> new TicketNotFoundException("Ticket not found...Verify the id... Id: " + id, HttpStatus.NOT_FOUND));
     }
 
     @Transactional
-    public TicketResponseDto createTicket(TicketRequestDto requestDto) {
+    public TicketResponseDto createTicket(TicketRequestDto requestDto, JwtAuthenticationToken token) {
 
         Ticket ticket = new Ticket();
 
@@ -70,15 +71,15 @@ public class TicketService {
     }
 
     @Transactional
-    public TicketResponseDto agreeTicket(Long userId, Long ticketId) {
+    public TicketResponseDto agreeTicket(Long userId, Long ticketId , JwtAuthenticationToken token) {
 
-        Ticket ticketResponse = new Ticket();
-        User usernameResponse = new User();
+        var ticketResponse = new Ticket();
+        var usernameResponse = new User();
 
         try {
             usernameResponse = userService.findById(userId);
             try {
-                ticketResponse = findById(ticketId);
+                ticketResponse = findById(ticketId, token);
             } catch (TicketNotFoundException e) {
                 throw new TicketNotFoundException("Ticket not found...Verify ticket id...",
                         HttpStatus.NOT_FOUND);
@@ -103,7 +104,7 @@ public class TicketService {
     }
 
     @Transactional
-    public void deleteTicketById(Long id) {
+    public void deleteTicketById(Long id, JwtAuthenticationToken token) {
 
         var ticketResponse = ticketRepository.findById(id);
 
