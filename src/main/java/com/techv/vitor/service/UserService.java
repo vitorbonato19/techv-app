@@ -10,6 +10,7 @@ import com.techv.vitor.entity.Sector;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.exception.EntityNotFoundException;
 import com.techv.vitor.exception.PasswordOrUsernameException;
+import com.techv.vitor.mapper.UserMapper;
 import com.techv.vitor.repository.RoleRepository;
 import com.techv.vitor.repository.SectorRepository;
 import com.techv.vitor.repository.TicketRepository;
@@ -45,17 +46,20 @@ public class UserService {
 
     private final JwtEncoder jwtEncoder;
 
+    private final UserMapper mapper;
+
 
     private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public UserService(UserRepository userRepository,
                        RoleRepository roleRepository, TicketRepository ticketRepository,
-                       SectorRepository sectorRepository, JwtEncoder jwtEncoder) {
+                       SectorRepository sectorRepository, JwtEncoder jwtEncoder, UserMapper mapper) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.ticketRepository = ticketRepository;
         this.sectorRepository = sectorRepository;
         this.jwtEncoder = jwtEncoder;
+        this.mapper = mapper;
     }
 
     public List<User> findAll(JwtAuthenticationToken token) {
@@ -102,27 +106,12 @@ public class UserService {
             var role = roleRepository.findByName(Roles.Values.NOT_ADMIN.name());
             var sector = sectorRepository.findByName(Sector.Values.TI.name());
 
-            User user = new User();
-
-            user.setUsername(requestDto.getUsername());
-            user.setPassword(requestDto.getPassword());
-            user.setEmail(requestDto.getEmail());
-            user.setLastModified(LocalDateTime.now());
-            user.setSector(Set.of(sector));
-            user.setRoles(Set.of(role));
+            var user = mapper.toEntity(requestDto);
 
             userRepository.save(user);
 
-            UserResponseDto responseDto = new UserResponseDto();
+            var responseDto = mapper.toResponseDto(user);
 
-            responseDto.setId(user.getId());
-            responseDto.setUsername(user.getUsername());
-            responseDto.setEmail(user.getEmail());
-            responseDto.setPassword(user.getPassword());
-            responseDto.setLastModified(LocalDateTime.now());
-            responseDto.setStatus(HttpStatus.CREATED);
-            responseDto.setStatusCode(HttpStatus.CREATED);
-            responseDto.setCep(getCep);
 
             return responseDto;
 
