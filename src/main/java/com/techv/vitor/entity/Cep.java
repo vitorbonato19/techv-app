@@ -5,12 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-@Entity
 public class Cep {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cepId;
     private String cep;
     private String logradouro;
     private String complemento;
@@ -23,8 +18,7 @@ public class Cep {
 
     }
 
-    public Cep(Long cepId, String cep, String logradouro, String complemento, String bairro, String localidade, String uf, String ibge) {
-        this.cepId = cepId;
+    public Cep(String cep, String logradouro, String complemento, String bairro, String localidade, String uf, String ibge) {
         this.cep = cep;
         this.logradouro = logradouro;
         this.complemento = complemento;
@@ -32,14 +26,6 @@ public class Cep {
         this.localidade = localidade;
         this.uf = uf;
         this.ibge = ibge;
-    }
-
-    public Long getCepId() {
-        return cepId;
-    }
-
-    public void setCepId(Long cepId) {
-        this.cepId = cepId;
     }
 
     public String getCep() {

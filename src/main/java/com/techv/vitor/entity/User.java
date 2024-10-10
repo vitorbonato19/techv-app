@@ -24,7 +24,6 @@ public class User {
     @NotBlank
     private String password;
     @NotBlank
-    @OneToOne
     private Cep cep;
     private Integer integrated;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -43,13 +42,22 @@ public class User {
 
     }
 
-    public User(Long id, String username, String email, String password, Integrated integrated, LocalDateTime lastModified) {
+    public User(Long id,Cep cep, String username, String email, String password, Integrated integrated, LocalDateTime lastModified) {
         this.id = id;
+        this.cep = cep;
         this.username = username;
         this.email = email;
         this.password = password;
         setIntegrated(integrated);
         this.lastModified = lastModified;
+    }
+
+    public Cep getCep() {
+        return cep;
+    }
+
+    public void setCep(Cep cep) {
+        this.cep = cep;
     }
 
     public Set<Sector> getSector() {
