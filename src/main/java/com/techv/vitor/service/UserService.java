@@ -84,29 +84,27 @@ public class UserService {
         if (response.getStatusCode() == HttpStatus.OK) {
             return response.getBody();
         } else {
-            throw new BadCredentialsException("invalid cep...verify the cep...");
+            throw new BadCredentialsException("invalid zip code...verify you request...");
         }
     }
 
     @Transactional
-    public UserResponseDto insertUsers(UserRequestDto requestDto, JwtAuthenticationToken token) {
+    public UserResponseDto insertUsers(UserRequestDto requestDto) {
 
         try {
 
             if (requestDto.getUsername() == null ||
                     requestDto.getPassword() == null ||
                     requestDto.getEmail() == null ||
-                    requestDto.getCep() == null) {
+                    requestDto.getZipCode() == null) {
                 throw new PasswordOrUsernameException(
                         "Existing fields that can't be null...",
                         HttpStatus.PRECONDITION_FAILED);
             }
 
-            var getCep = getCep(requestDto.getCep());
-            var role = roleRepository.findByName(Roles.Values.NOT_ADMIN.name());
-            var sector = sectorRepository.findByName(Sector.Values.TI.name());
-
             var user = mapper.toEntity(requestDto);
+
+            user.setRoles(Set.of(roleRepository.findByName(Roles.Values.ADMIN.name())));
 
             userRepository.save(user);
 
@@ -163,7 +161,7 @@ public class UserService {
                                 loginRequest.getUsername(),
                                 HttpStatus.NOT_FOUND)
                 );
-        return loginRequest.getPassword().equals(user.getPassword()) ? true : false;
+        return loginRequest.getPassword().equals(user.getPassword());
     }
 
 
@@ -178,14 +176,7 @@ public class UserService {
 
         userRepository.save(newUser);
 
-        UserResponseDto responseDto = new UserResponseDto();
-
-        responseDto.setId(newUser.getId());
-        responseDto.setUsername(newUser.getUsername());
-        responseDto.setEmail(newUser.getEmail());
-        responseDto.setPassword(newUser.getPassword());
-        responseDto.setLastModified(LocalDateTime.now());
-        responseDto.setStatus(HttpStatus.OK);
+        var responseDto = mapper.toResponseDto(newUser);
 
         return responseDto;
     }

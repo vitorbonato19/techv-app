@@ -1,31 +1,29 @@
 package com.techv.vitor.controller.dto;
 
-import com.techv.vitor.entity.Sector;
-
 public class UserRequestDto {
 
     private String username;
     private String email;
     private String password;
-    private String cep;
+    private String zipCode;
 
     public UserRequestDto() {
 
     }
 
-    public UserRequestDto(String username, String email, String password, String cep) {
+    public UserRequestDto(String username, String email, String password, String zipCode) {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.cep = cep;
+        this.zipCode = zipCode;
     }
 
-    public String getCep() {
-        return cep;
+    public String getZipCode() {
+        return zipCode;
     }
 
-    public void setCep(String cep) {
-        this.cep = cep;
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
     }
 
     public String getUsername() {

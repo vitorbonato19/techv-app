@@ -1,10 +1,10 @@
 package com.techv.vitor.entity.enums;
 
 public enum TypeTicket {
-    PC_MAINTENCE(0),
-    NETWORK_ERROR(1),
-    FEATURE(2),
-    ANOTHER(3);
+    PC_MAINTENCE(1),
+    NETWORK_ERROR(2),
+    FEATURE(3),
+    ANOTHER(4);
 
     private final int ticketValue;
 

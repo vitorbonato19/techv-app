@@ -24,7 +24,7 @@ public class User {
     @NotBlank
     private String password;
     @NotBlank
-    private Cep cep;
+    private String zipCode;
     private Integer integrated;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModified;
@@ -42,9 +42,8 @@ public class User {
 
     }
 
-    public User(Long id,Cep cep, String username, String email, String password, Integrated integrated, LocalDateTime lastModified) {
+    public User(Long id, String username, String email, String password, Integrated integrated, LocalDateTime lastModified) {
         this.id = id;
-        this.cep = cep;
         this.username = username;
         this.email = email;
         this.password = password;
@@ -52,12 +51,12 @@ public class User {
         this.lastModified = lastModified;
     }
 
-    public Cep getCep() {
-        return cep;
+    public String getZipCode() {
+        return zipCode;
     }
 
-    public void setCep(Cep cep) {
-        this.cep = cep;
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
     }
 
     public Set<Sector> getSector() {

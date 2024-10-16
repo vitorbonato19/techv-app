@@ -73,11 +73,13 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Data<UserResponseDto>> insertUsers(@RequestBody UserRequestDto requestDto, JwtAuthenticationToken token) {
-        UserResponseDto dtoResponse = userService.insertUsers(requestDto, token);
+    public ResponseEntity<Data<UserResponseDto>> insertUsers(@RequestBody UserRequestDto requestDto) {
+        UserResponseDto dtoResponse = userService.insertUsers(requestDto);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("issuer", "api-techv.java");
-        headers.add("userId", "" + dtoResponse.getId());
+        headers.add("Issuer", "api-techv.java");
+        headers.add("Status", "201");
+        headers.add("StatusCode", "CREATED");
+        headers.add("User-Id", "" + dtoResponse.getId());
         headers.setDate(Instant.now());
         var headerData = data.convertToMap(headers);
         var response = new Data<>(dtoResponse, headerData);
@@ -89,7 +91,10 @@ public class UserController {
     public ResponseEntity<Data<UserResponseDto>> updateUsers(@RequestBody User user, @PathVariable Long id, JwtAuthenticationToken token) {
         UserResponseDto dtoResponse = userService.updateUsers(user, id, token);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("issuer", "api-techv.java");
+        headers.add("Issuer", "api-techv.java");
+        headers.add("Status", "200");
+        headers.add("Auth-Token", "" + token.getToken());
+        headers.add("StatusCode", "OK");
         headers.setDate(Instant.now());
         var headerData = data.convertToMap(headers);
         var response = new Data<>(dtoResponse, headerData);
@@ -101,6 +106,7 @@ public class UserController {
     public ResponseEntity<ResponseEntity<Void>> deleteUserById(@PathVariable Long id, JwtAuthenticationToken token) {
         userService.deleteUser(id, token);
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Auth-Token", "" + token.getToken());
         headers.add("issuer", "api-techv.java");
         headers.setDate(Instant.now());
         var headerData = data.convertToMap(headers);
