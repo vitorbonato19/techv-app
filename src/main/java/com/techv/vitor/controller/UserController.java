@@ -37,8 +37,10 @@ public class UserController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    public ResponseEntity<Data<List<User>>> findAll(JwtAuthenticationToken token) {
-        var clients = userService.findAll(token);
+    public ResponseEntity<Data<List<User>>> findAll(@RequestParam int page,
+                                                    @RequestParam int quantity,
+                                                    JwtAuthenticationToken token) {
+        var clients = userService.findAll(page, quantity, token);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("issuer", "api-techv.java");
         headers.setDate(Instant.now());

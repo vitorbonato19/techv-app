@@ -16,6 +16,8 @@ import com.techv.vitor.repository.SectorRepository;
 import com.techv.vitor.repository.TicketRepository;
 import com.techv.vitor.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -62,8 +64,10 @@ public class UserService {
         this.mapper = mapper;
     }
 
-    public List<User> findAll(JwtAuthenticationToken token) {
-        return userRepository.findAll();
+    public Page<User> findAll(int page,
+                              int quantity,
+                              JwtAuthenticationToken token) {
+        return userRepository.findAll(PageRequest.of(page, quantity));
     }
 
     public User findById(Long id) {
@@ -105,6 +109,7 @@ public class UserService {
             var user = mapper.toEntity(requestDto);
 
             user.setRoles(Set.of(roleRepository.findByName(Roles.Values.ADMIN.name())));
+            user.setSector(Set.of(sectorRepository.findByName(Sector.Values.TI.name())));
 
             userRepository.save(user);
 

@@ -1,6 +1,8 @@
-package com.techv.vitor.entity;
+package com.techv.vitor.infrastructure.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.techv.vitor.entity.Roles;
+import com.techv.vitor.entity.Ticket;
 import com.techv.vitor.entity.enums.Integrated;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -11,8 +13,8 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "usuarios")
-public class User {
+@Table(name = "users")
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,11 +37,11 @@ public class User {
     @OneToMany(mappedBy = "users")
     private List<Ticket> tickets;
 
-    public User() {
+    public UserEntity() {
 
     }
 
-    public User(Long id, String username, String email, String password, Integrated integrated, LocalDateTime lastModified) {
+    public UserEntity(Long id, String username, String email, String password, Integrated integrated, LocalDateTime lastModified) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -130,8 +132,8 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return id.equals(user.id);
+        UserEntity that = (UserEntity) o;
+        return id.equals(that.id);
     }
 
     @Override

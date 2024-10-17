@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.techv.vitor.entity.enums.Finished;
 import com.techv.vitor.entity.enums.TypeTicket;
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 
@@ -16,19 +16,30 @@ public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Nonnull
+    @NotBlank
     private String requester;
-    @Nonnull
+    @NotBlank
+    @Column(columnDefinition = "VARCHAR (15) DEFAULT 'OPEN'")
+    private String status;
+    @NotBlank
+    @Column(columnDefinition = "VARCHAR (15) DEFAULT NULL")
     private String analyst;
-    @Column(columnDefinition = "TEXT")
-    private String text;
-    @Column(columnDefinition = "TEXT")
+    @NotBlank
+    @Column(columnDefinition = "VARCHAR (250) DEFAULT NULL")
+    private String description;pe
+    @NotBlank
+    @Column(columnDefinition = "VARCHAR (250) DEFAULT NULL")
     private String reply;
+    @Column(columnDefinition = "INT (1) DEFAULT 0")
     private Integer typeTicket;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT '2000-01-01 00:00:00'")
     private LocalDateTime createdAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT '2000-01-01 00:00:00'")
     private LocalDateTime finishedAt;
+
+    @Column(nullable = true, columnDefinition = "INT DEFAULT 0", length = 1)
     private Integer finished;
 
     @ManyToOne
@@ -39,17 +50,34 @@ public class Ticket {
 
     }
 
-    public Ticket(Long id, String requester, String analyst, String text, String reply, TypeTicket typeTicket, LocalDateTime createdAt, LocalDateTime finishedAt, Finished finished, User users) {
+    public Ticket(Long id, String requester, String analyst, String description, String reply, TypeTicket typeTicket, LocalDateTime createdAt, LocalDateTime finishedAt, Finished finished, String status, User users) {
         this.id = id;
         this.requester = requester;
         this.analyst = analyst;
-        this.text = text;
+        this.description = description;
         this.reply = reply;
+        this.status = status;
         setTypeTicket(typeTicket);
         this.createdAt = createdAt;
         this.finishedAt = finishedAt;
         setFinished(finished);
         this.users = users;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setTypeTicket(Integer typeTicket) {
+        this.typeTicket = typeTicket;
+    }
+
+    public void setFinished(Integer finished) {
+        this.finished = finished;
     }
 
     public Long getId() {
@@ -76,12 +104,12 @@ public class Ticket {
         this.analyst = analyst;
     }
 
-    public String getText() {
-        return text;
+    public String getDescription() {
+        return description;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setText(String description) {
+        this.description = description;
     }
 
     public String getReply() {
