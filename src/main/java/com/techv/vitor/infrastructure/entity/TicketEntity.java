@@ -1,7 +1,8 @@
-package com.techv.vitor.entity;
+package com.techv.vitor.infrastructure.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.techv.vitor.entity.User;
 import com.techv.vitor.entity.enums.Finished;
 import com.techv.vitor.entity.enums.TypeTicket;
 import jakarta.persistence.*;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tickets")
-public class Ticket {
+public class TicketEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,11 +47,11 @@ public class Ticket {
     @JoinColumn(name = "id_user")
     private User users;
 
-    public Ticket() {
+    public TicketEntity() {
 
     }
 
-    public Ticket(Long id, String requester, String analyst, String description, String reply, TypeTicket typeTicket, LocalDateTime createdAt, LocalDateTime finishedAt, Finished finished, String status, User users) {
+    public TicketEntity(Long id, String requester, String analyst, String description, String reply, TypeTicket typeTicket, LocalDateTime createdAt, LocalDateTime finishedAt, Finished finished, String status, User users) {
         this.id = id;
         this.requester = requester;
         this.analyst = analyst;

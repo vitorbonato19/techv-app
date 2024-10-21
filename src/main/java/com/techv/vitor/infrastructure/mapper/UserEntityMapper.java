@@ -5,7 +5,18 @@ import com.techv.vitor.infrastructure.entity.UserEntity;
 
 public class UserEntityMapper {
 
-    UserEntity toEntity(User domainUserObj) {
+    public UserEntity toEntity(User domainUser) {
 
+        return UserEntity
+                .builder()
+                .username(domainUser.username())
+                .email(domainUser.email())
+                .password(domainUser.password())
+                .tickets(domainUser.tickets())
+                .role(domainUser.role())
+                .zipCode(domainUser.zipcode())
+                .build();
     }
+
+
 }
