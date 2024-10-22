@@ -1,7 +1,5 @@
 package com.techv.vitor.controller.dto;
 
-import java.time.LocalDateTime;
-
 public class TicketRequestDto {
 
     private String requester;

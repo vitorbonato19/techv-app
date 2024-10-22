@@ -2,8 +2,6 @@ package com.techv.vitor.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.techv.vitor.entity.Roles;
-import com.techv.vitor.entity.Sector;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

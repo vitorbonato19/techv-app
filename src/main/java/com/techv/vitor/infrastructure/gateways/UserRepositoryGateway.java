@@ -3,7 +3,7 @@ package com.techv.vitor.infrastructure.gateways;
 import com.techv.vitor.application.gateways.UserGateway;
 import com.techv.vitor.domain.entity.Login;
 import com.techv.vitor.domain.entity.User;
-import com.techv.vitor.infrastructure.entity.UserEntity;
+import com.techv.vitor.infrastructure.dto.UserResponseDto;
 import com.techv.vitor.infrastructure.mapper.UserEntityMapper;
 import com.techv.vitor.infrastructure.persistence.UserRepository;
 
@@ -21,22 +21,24 @@ public class UserRepositoryGateway implements UserGateway {
     }
 
     @Override
-    public User loginUser(Login login) {
+    public UserResponseDto loginUser(Login login) {
         return null;
     }
 
     @Override
-    public List<User> findAll() {
+    public List<UserResponseDto> findAll() {
         return null;
     }
 
     @Override
-    public User findById(Long id) {
+    public UserResponseDto findById(Long id) {
         return null;
     }
-
     @Override
-    public UserEntity createUser(User domainUser) {
-        return userEntityMapper.toEntity(domainUser);
+    public User createUser(User domainObj) {
+        var entity = userEntityMapper.domainToEntity(domainObj);
+        var toDomain = userRepository.save(entity);
+        var response = userEntityMapper.
+        return userEntityMapper.toResponseDto(response);
     }
 }

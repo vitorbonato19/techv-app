@@ -1,7 +1,7 @@
-# Refatoração do Projeto: Arquitetura Padrão Spring para Clean Architecture
+# Refatoração do Projeto: Arquitetura em Camadas para Clean Architecture
 
 ## Visão Geral
-Este documento tem a intenção de descrever as mudanças realizadas na estrutura do projeto durante a migração da arquitetura padrão do Spring para a Clean Architecture. O objetivo dessa refatoração é melhorar a modularidade, separação de responsabilidades e facilitar a manutenção e testes do código.
+A intenção desse readme é descrever as mudanças realizadas na estrutura do projeto durante a migração da arquitetura em Camadas do Spring para a Clean Architecture. O objetivo dessa refatoração é melhorar a modularidade, separação de responsabilidades e facilitar a manutenção e testes do código.
 
 ## Objetivos
 - Implementar a Clean Architecture para isolar domínios, dados, interfaces e regras de negócio.
@@ -40,5 +40,5 @@ Este documento tem a intenção de descrever as mudanças realizadas na estrutur
 - Exposição das APIs e interação com as interfaces definidas nas camadas de aplicação e domínio.
 
   **Exemplo:**
-  - `UserController.java`: Controlador REST para usuários.
+  - `UserController.java`: Controlador REST de usuários.
   - `JpaUserRepository.java`: Implementação da interface `UserRepository

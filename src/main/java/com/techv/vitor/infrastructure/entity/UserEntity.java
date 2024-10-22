@@ -1,12 +1,9 @@
 package com.techv.vitor.infrastructure.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.techv.vitor.entity.Roles;
-import com.techv.vitor.entity.Ticket;
 import com.techv.vitor.entity.enums.Integrated;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.web.util.WebUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;

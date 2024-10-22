@@ -1,9 +1,9 @@
-package com.techv.vitor.controller;
+package com.techv.vitor.infrastructure.controller;
 
 import com.techv.vitor.controller.dto.TicketRequestDto;
 import com.techv.vitor.controller.dto.TicketResponseDto;
-import com.techv.vitor.entity.Data;
 import com.techv.vitor.entity.Ticket;
+import com.techv.vitor.infrastructure.entity.Data;
 import com.techv.vitor.repository.TicketRepository;
 import com.techv.vitor.service.TicketService;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tickets")
-public class TicketsController {
+public class TicketController {
 
     private final TicketRepository ticketRepository;
 
@@ -29,7 +29,7 @@ public class TicketsController {
 
     private final HttpHeaders headers;
 
-    public TicketsController(TicketRepository ticketRepository, TicketService ticketService, Data data, HttpHeaders headers) {
+    public TicketController(TicketRepository ticketRepository, TicketService ticketService, Data data, HttpHeaders headers) {
         this.ticketRepository = ticketRepository;
         this.ticketService = ticketService;
         this.data = data;

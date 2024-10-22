@@ -8,8 +8,8 @@ import com.techv.vitor.entity.Cep;
 import com.techv.vitor.entity.Roles;
 import com.techv.vitor.entity.Sector;
 import com.techv.vitor.entity.User;
-import com.techv.vitor.exception.EntityNotFoundException;
-import com.techv.vitor.exception.PasswordOrUsernameException;
+import com.techv.vitor.infrastructure.exception.EntityNotFoundException;
+import com.techv.vitor.infrastructure.exception.PasswordOrUsernameException;
 import com.techv.vitor.mapper.UserMapper;
 import com.techv.vitor.repository.RoleRepository;
 import com.techv.vitor.repository.SectorRepository;
@@ -29,9 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 

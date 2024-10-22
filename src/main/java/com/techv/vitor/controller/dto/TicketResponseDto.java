@@ -2,7 +2,6 @@ package com.techv.vitor.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.techv.vitor.entity.enums.TypeTicket;
-import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 

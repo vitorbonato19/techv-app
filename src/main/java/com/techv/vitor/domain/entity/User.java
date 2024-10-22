@@ -1,7 +1,5 @@
 package com.techv.vitor.domain.entity;
 
-import com.techv.vitor.entity.Roles;
-import com.techv.vitor.entity.Sector;
 import com.techv.vitor.infrastructure.entity.RoleEntity;
 import com.techv.vitor.infrastructure.entity.TicketEntity;
 
