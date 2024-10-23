@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Component
-public class UserResponseDto {
+public class UserResponseDto2 {
 
     private Long id;
     private String username;
@@ -21,16 +21,16 @@ public class UserResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModified;
 
-    public UserResponseDto() {
+    public UserResponseDto2() {
 
     }
 
-    public UserResponseDto(Long id,
-                           String username,
-                           String email,
-                           LocalDateTime lastModified,
-                           String zipCode,
-                           Set<Roles> roles) {
+    public UserResponseDto2(Long id,
+                            String username,
+                            String email,
+                            LocalDateTime lastModified,
+                            String zipCode,
+                            Set<Roles> roles) {
         this.id = id;
         this.username = username;
         this.email = email;

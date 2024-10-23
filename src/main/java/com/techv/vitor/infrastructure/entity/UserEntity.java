@@ -1,7 +1,6 @@
 package com.techv.vitor.infrastructure.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.techv.vitor.entity.enums.Integrated;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -133,12 +132,6 @@ public class UserEntity {
 
     public Integer getIntegrated() {
         return integrated;
-    }
-
-    public void setIntegrated(Integrated integrated) {
-        if(integrated != null) {
-            this.integrated = integrated.getValue();
-        }
     }
 
     public LocalDateTime getLastModified() {

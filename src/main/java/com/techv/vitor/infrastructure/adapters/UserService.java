@@ -1,71 +1,50 @@
-package com.techv.vitor.service;
+package com.techv.vitor.infrastructure.adapters;
 
+import com.techv.vitor.application.entity.User;
+import com.techv.vitor.application.usecases.UserUseCasesImpl;
 import com.techv.vitor.controller.dto.LoginRequest;
 import com.techv.vitor.controller.dto.LoginResponse;
 import com.techv.vitor.controller.dto.UserRequestDto;
 import com.techv.vitor.controller.dto.UserResponseDto2;
-import com.techv.vitor.entity.Cep;
-import com.techv.vitor.entity.Roles;
-import com.techv.vitor.entity.Sector;
-import com.techv.vitor.entity.User;
+import com.techv.vitor.infrastructure.dto.UserResponseDto;
 import com.techv.vitor.infrastructure.exception.EntityNotFoundException;
 import com.techv.vitor.infrastructure.exception.PasswordOrUsernameException;
-import com.techv.vitor.mapper.UserMapper;
-import com.techv.vitor.repository.RoleRepository;
-import com.techv.vitor.repository.SectorRepository;
-import com.techv.vitor.repository.TicketRepository;
-import com.techv.vitor.repository.UserRepository;
+import com.techv.vitor.infrastructure.mapper.UserEntityMapper;
 import jakarta.transaction.Transactional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
-import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final UserUseCasesImpl userUseCases;
 
-    private final RoleRepository roleRepository;
+    private final UserEntityMapper userEntityMapper;
 
-    private final TicketRepository ticketRepository;
-
-    private final SectorRepository sectorRepository;
-
-    private final JwtEncoder jwtEncoder;
-
-    private final UserMapper mapper;
-
-
-    private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-    public UserService(UserRepository userRepository,
-                       RoleRepository roleRepository, TicketRepository ticketRepository,
-                       SectorRepository sectorRepository, JwtEncoder jwtEncoder, UserMapper mapper) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.ticketRepository = ticketRepository;
-        this.sectorRepository = sectorRepository;
-        this.jwtEncoder = jwtEncoder;
-        this.mapper = mapper;
+    public UserService(UserUseCasesImpl userUseCases, UserEntityMapper userEntityMapper) {
+        this.userUseCases = userUseCases;
+        this.userEntityMapper = userEntityMapper;
     }
 
-    public Page<User> findAll(int page,
-                              int quantity,
-                              JwtAuthenticationToken token) {
-        return userRepository.findAll(PageRequest.of(page, quantity));
+    public List<UserResponseDto> findAll(int page,
+                                         int size,
+                                         JwtAuthenticationToken token) {
+        var entity =
+                userUseCases.findAll(page, size).stream()
+                
+        return userEntityMapper.toResponseDto();
     }
 
     public User findById(Long id) {

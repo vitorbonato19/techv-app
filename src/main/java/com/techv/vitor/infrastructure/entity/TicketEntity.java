@@ -1,11 +1,17 @@
 package com.techv.vitor.infrastructure.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.techv.vitor.entity.User;
-import com.techv.vitor.entity.enums.Finished;
-import com.techv.vitor.entity.enums.TypeTicket;
-import jakarta.persistence.*;
+import com.techv.vitor.infrastructure.entity.enums.TypeTicket;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
@@ -31,8 +37,8 @@ public class TicketEntity {
     @NotBlank
     @Column(columnDefinition = "VARCHAR (250) DEFAULT NULL")
     private String reply;
-    @Column(columnDefinition = "INT (1) DEFAULT 0")
-    private Integer typeTicket;
+    @Enumerated(EnumType.STRING)
+    private TypeTicket typeTicket;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(columnDefinition = "TIMESTAMP DEFAULT '2000-01-01 00:00:00'")
     private LocalDateTime createdAt;
@@ -45,40 +51,24 @@ public class TicketEntity {
 
     @ManyToOne
     @JoinColumn(name = "id_user")
-    private User users;
+    private UserEntity users;
 
     public TicketEntity() {
 
     }
 
-    public TicketEntity(Long id, String requester, String analyst, String description, String reply, TypeTicket typeTicket, LocalDateTime createdAt, LocalDateTime finishedAt, Finished finished, String status, User users) {
+    public TicketEntity(Long id, String requester, String status, String analyst, String description, String reply, TypeTicket typeTicket, LocalDateTime createdAt, LocalDateTime finishedAt, Integer finished, UserEntity users) {
         this.id = id;
         this.requester = requester;
+        this.status = status;
         this.analyst = analyst;
         this.description = description;
         this.reply = reply;
-        this.status = status;
-        setTypeTicket(typeTicket);
+        this.typeTicket = typeTicket;
         this.createdAt = createdAt;
         this.finishedAt = finishedAt;
-        setFinished(finished);
-        this.users = users;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setTypeTicket(Integer typeTicket) {
-        this.typeTicket = typeTicket;
-    }
-
-    public void setFinished(Integer finished) {
         this.finished = finished;
+        this.users = users;
     }
 
     public Long getId() {
@@ -97,6 +87,14 @@ public class TicketEntity {
         this.requester = requester;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public String getAnalyst() {
         return analyst;
     }
@@ -109,7 +107,7 @@ public class TicketEntity {
         return description;
     }
 
-    public void setText(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -121,14 +119,12 @@ public class TicketEntity {
         this.reply = reply;
     }
 
-    public Integer getTypeTicket() {
+    public TypeTicket getTypeTicket() {
         return typeTicket;
     }
 
     public void setTypeTicket(TypeTicket typeTicket) {
-        if (typeTicket != null) {
-            this.typeTicket = typeTicket.getTicketValue();
-        }
+        this.typeTicket = typeTicket;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -151,18 +147,15 @@ public class TicketEntity {
         return finished;
     }
 
-    public void setFinished(Finished finished) {
-        if (finished != null) {
-            this.finished = finished.getValue();
-        }
+    public void setFinished(Integer finished) {
+        this.finished = finished;
     }
 
-    @JsonIgnore
-    public User getUsers() {
+    public UserEntity getUsers() {
         return users;
     }
 
-    public void setUsers(User users) {
+    public void setUsers(UserEntity users) {
         this.users = users;
     }
 }

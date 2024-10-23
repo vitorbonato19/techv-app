@@ -1,16 +1,20 @@
 package com.techv.vitor.infrastructure.mapper;
 
-import com.techv.vitor.domain.entity.User;
+import com.techv.vitor.application.entity.User;
 import com.techv.vitor.infrastructure.dto.UserRequestDto;
 import com.techv.vitor.infrastructure.dto.UserResponseDto;
 import com.techv.vitor.infrastructure.entity.UserEntity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class UserEntityMapper {
 
-    public User toDomain(UserEntity entity) {
+    public User entityToDomain(UserEntity entity) {
 
-
+        return new User(entity.getUsername(), entity.getEmail(), entity.getPassword(), entity.getZipCode());
     }
+
 
     public UserEntity domainToEntity(User domainUser) {
 
@@ -19,8 +23,6 @@ public class UserEntityMapper {
                 .username(domainUser.username())
                 .email(domainUser.email())
                 .password(domainUser.password())
-                .tickets(domainUser.tickets())
-                .role(domainUser.role())
                 .zipCode(domainUser.zipcode())
                 .build();
     }

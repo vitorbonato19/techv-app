@@ -1,4 +1,4 @@
-package com.techv.vitor.domain.entity;
+package com.techv.vitor.application.entity;
 
 public record Login(String username, String password) {
 }

@@ -3,7 +3,7 @@ package com.techv.vitor.controller;
 import com.techv.vitor.controller.dto.LoginRequest;
 import com.techv.vitor.controller.dto.LoginResponse;
 import com.techv.vitor.controller.dto.UserRequestDto;
-import com.techv.vitor.controller.dto.UserResponseDto;
+import com.techv.vitor.controller.dto.UserResponseDto2;
 import com.techv.vitor.entity.Data;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.service.UserService;
@@ -75,8 +75,8 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Data<UserResponseDto>> insertUsers(@RequestBody UserRequestDto requestDto) {
-        UserResponseDto dtoResponse = userService.insertUsers(requestDto);
+    public ResponseEntity<Data<UserResponseDto2>> insertUsers(@RequestBody UserRequestDto requestDto) {
+        UserResponseDto2 dtoResponse = userService.insertUsers(requestDto);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("Issuer", "api-techv.java");
         headers.add("Status", "201");
@@ -90,8 +90,8 @@ public class UserController {
 
     @PutMapping("/update/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Data<UserResponseDto>> updateUsers(@RequestBody User user, @PathVariable Long id, JwtAuthenticationToken token) {
-        UserResponseDto dtoResponse = userService.updateUsers(user, id, token);
+    public ResponseEntity<Data<UserResponseDto2>> updateUsers(@RequestBody User user, @PathVariable Long id, JwtAuthenticationToken token) {
+        UserResponseDto2 dtoResponse = userService.updateUsers(user, id, token);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("Issuer", "api-techv.java");
         headers.add("Status", "200");
