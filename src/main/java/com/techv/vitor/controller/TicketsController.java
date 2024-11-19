@@ -4,21 +4,22 @@ import com.techv.vitor.controller.dto.TicketRequestDto;
 import com.techv.vitor.controller.dto.TicketResponseDto;
 import com.techv.vitor.entity.Data;
 import com.techv.vitor.entity.Ticket;
+import com.techv.vitor.exception.TicketNotFoundException;
 import com.techv.vitor.repository.TicketRepository;
 import com.techv.vitor.service.TicketService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.time.Instant;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tickets")
+@RequestMapping("/api/v1/tickets")
 public class TicketsController {
 
     private final TicketRepository ticketRepository;
@@ -38,15 +39,10 @@ public class TicketsController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    public ResponseEntity<Data<List<Ticket>>> findAll(@RequestParam int page,
-                                                      @RequestParam int quantity,
-                                                      JwtAuthenticationToken token) {
-        var tickets = ticketService.findAll(page, quantity, token);
+    public ResponseEntity<Data<List<Ticket>>> findAll() {
+        var tickets = ticketRepository.findAll();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Issuer", "api-techv.java");
-        headers.add("Status", "" + HttpStatus.OK.value());
-        headers.add("StatusCode", "" + HttpStatus.OK);
+        headers.add("issuer", "api-techv.java");
         headers.setDate(Instant.now());
         var headerData = data.convertToMap(headers);
         var response = new Data<>(tickets, headerData);
@@ -55,44 +51,38 @@ public class TicketsController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Data<Ticket>> findById(@PathVariable Long id, JwtAuthenticationToken token) {
-        var tickets = ticketService.findById(id, token);
+    public ResponseEntity<Data<Ticket>> findById(@PathVariable Long id) {
+         var tickets = ticketRepository.findById(id).orElseThrow(() ->
+                 new TicketNotFoundException(
+                         "Ticket nout found, verify your id...",
+                         HttpStatus.NOT_FOUND));
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Issuer", "api-techv.java");
-        headers.add("Status", "" + HttpStatus.OK.value());
-        headers.add("StatusCode", "" + HttpStatus.OK);
-        headers.add("Auth-Token", "" + token.getToken().getTokenValue());
+        headers.add("issuer", "api-techv.java");
         headers.setDate(Instant.now());
         var headerData = data.convertToMap(headers);
         var response = new Data<>(tickets, headerData);
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
     }
 
-    @PostMapping("/create")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Data<TicketResponseDto>> createTicket(@RequestBody TicketRequestDto ticketRequestDto, JwtAuthenticationToken token) {
         var tickets = ticketService.createTicket(ticketRequestDto, token);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Issuer", "api-techv.java");
-        headers.add("Ticket-Id", "" + tickets.getId());
-        headers.add("Status", "" + HttpStatus.CREATED.value());
-        headers.add("StatusCode", "" + HttpStatus.CREATED);
-        headers.add("Auth-Token", "" + token.getToken().getTokenValue());
+        headers.add("issuer", "api-techv.java");
+        headers.add("userID", "" + tickets.getId());
         headers.setDate(Instant.now());
         var headerData = data.convertToMap(headers);
         var response = new Data<>(tickets, headerData);
         return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("/agree/{userId}/{ticketId}")
+    @PutMapping("/agree/{userUUID}/{ticketId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Data<TicketResponseDto>> agreeTicket(@PathVariable Long userId, @PathVariable Long ticketId, JwtAuthenticationToken token) {
         var tickets = ticketService.agreeTicket(userId, ticketId, token);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Issuer", "api-techv.java");
-        headers.add("Status", "" + HttpStatus.OK.value());
-        headers.add("StatusCode", "" + HttpStatus.OK);
-        headers.add("Auth-Token", "" + token.getToken().getTokenValue());
+        headers.add("issuer", "api-techv.java");
         headers.setDate(Instant.now());
         var headerData = data.convertToMap(headers);
         var response = new Data<>(tickets, headerData);
@@ -104,10 +94,7 @@ public class TicketsController {
     public ResponseEntity<ResponseEntity<Void>> deleteTicketById(@PathVariable Long id, JwtAuthenticationToken token) {
         ticketService.deleteTicketById(id, token);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Issuer", "api-techv.java");
-        headers.add("Status", "" + HttpStatus.NO_CONTENT.value());
-        headers.add("StatusCode", "" + HttpStatus.NO_CONTENT);
-        headers.add("Auth-Token", "" + token.getToken().getTokenValue());
+        headers.add("issuer", "api-techv.java");
         headers.setDate(Instant.now());
         return new ResponseEntity<>(null, headers, HttpStatus.NO_CONTENT);
     }

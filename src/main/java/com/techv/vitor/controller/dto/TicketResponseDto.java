@@ -2,14 +2,17 @@ package com.techv.vitor.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.techv.vitor.entity.enums.TypeTicket;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
 public class TicketResponseDto {
 
     private Long id;
+    private HttpStatus status;
+    private HttpStatus statusCode;
     private String requester;
-    private String description;
+    private String text;
     private Integer typeTicket;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
@@ -20,12 +23,30 @@ public class TicketResponseDto {
 
     }
 
-    public TicketResponseDto(Long id, String requester, String description,Integer typeTicket, Integer finished) {
+    public TicketResponseDto(Long id, HttpStatus status, HttpStatus statusCode, String requester, String text,Integer typeTicket, Integer finished) {
         this.id = id;
+        this.status = status;
+        this.statusCode = statusCode;
         this.requester = requester;
-        this.description = description;
+        this.text = text;
         this.typeTicket = typeTicket;
         this.finished = finished;
+    }
+
+    public int getStatusCode() {
+        return statusCode.value();
+    }
+
+    public void setStatusCode(HttpStatus statusCode) {
+        this.statusCode = statusCode;
+    }
+
+    public HttpStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(HttpStatus status) {
+        this.status = status;
     }
 
     public Long getId() {
@@ -56,12 +77,12 @@ public class TicketResponseDto {
         this.requester = requester;
     }
 
-    public String getDescription() {
-        return description;
+    public String getText() {
+        return text;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setText(String text) {
+        this.text = text;
     }
 
     public Integer getTypeTicket() {

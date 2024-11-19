@@ -3,21 +3,19 @@ package com.techv.vitor.service;
 import com.techv.vitor.controller.dto.LoginRequest;
 import com.techv.vitor.controller.dto.LoginResponse;
 import com.techv.vitor.controller.dto.UserRequestDto;
-import com.techv.vitor.controller.dto.UserResponseDto2;
+import com.techv.vitor.controller.dto.UserResponseDto;
 import com.techv.vitor.entity.Cep;
 import com.techv.vitor.entity.Roles;
 import com.techv.vitor.entity.Sector;
 import com.techv.vitor.entity.User;
-import com.techv.vitor.infrastructure.exception.EntityNotFoundException;
-import com.techv.vitor.infrastructure.exception.PasswordOrUsernameException;
+import com.techv.vitor.exception.EntityNotFoundException;
+import com.techv.vitor.exception.PasswordOrUsernameException;
 import com.techv.vitor.mapper.UserMapper;
 import com.techv.vitor.repository.RoleRepository;
 import com.techv.vitor.repository.SectorRepository;
 import com.techv.vitor.repository.TicketRepository;
 import com.techv.vitor.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -29,7 +27,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -62,10 +62,8 @@ public class UserService {
         this.mapper = mapper;
     }
 
-    public Page<User> findAll(int page,
-                              int quantity,
-                              JwtAuthenticationToken token) {
-        return userRepository.findAll(PageRequest.of(page, quantity));
+    public List<User> findAll(JwtAuthenticationToken token) {
+        return userRepository.findAll();
     }
 
     public User findById(Long id) {
@@ -91,7 +89,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto2 insertUsers(UserRequestDto requestDto) {
+    public UserResponseDto insertUsers(UserRequestDto requestDto) {
 
         try {
 
@@ -107,7 +105,6 @@ public class UserService {
             var user = mapper.toEntity(requestDto);
 
             user.setRoles(Set.of(roleRepository.findByName(Roles.Values.ADMIN.name())));
-            user.setSector(Set.of(sectorRepository.findByName(Sector.Values.TI.name())));
 
             userRepository.save(user);
 
@@ -169,7 +166,7 @@ public class UserService {
 
 
     @Transactional
-    public UserResponseDto2 updateUsers(User user, Long id , JwtAuthenticationToken token) {
+    public UserResponseDto updateUsers(User user, Long id , JwtAuthenticationToken token) {
 
         User newUser = findById(id);
         newUser.setUsername(user.getUsername());

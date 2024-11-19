@@ -1,19 +1,23 @@
 package com.techv.vitor.controller.dto;
 
+import java.time.LocalDateTime;
+
 public class TicketRequestDto {
 
     private String requester;
     private Integer typeTicket;
-    private String description;
+    private String text;
+    private LocalDateTime createdAt;
 
     public TicketRequestDto() {
 
     }
 
-    public TicketRequestDto(String requester, Integer typeTicket, String description) {
+    public TicketRequestDto(String requester, Integer typeTicket, String text, LocalDateTime createdAt) {
         this.requester = requester;
         this.typeTicket = typeTicket;
-        this.description = description;
+        this.text = text;
+        this.createdAt = createdAt;
     }
 
     public String getRequester() {
@@ -32,11 +36,19 @@ public class TicketRequestDto {
         this.typeTicket = typeTicket;
     }
 
-    public String getDescription() {
-        return description;
+    public String getText() {
+        return text;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

@@ -4,35 +4,34 @@ import com.techv.vitor.controller.dto.TicketRequestDto;
 import com.techv.vitor.controller.dto.TicketResponseDto;
 import com.techv.vitor.entity.Ticket;
 import com.techv.vitor.entity.User;
-import com.techv.vitor.infrastructure.exception.EntityNotFoundException;
-import com.techv.vitor.infrastructure.exception.GenericException;
-import com.techv.vitor.infrastructure.exception.TicketCreatedException;
-import com.techv.vitor.infrastructure.exception.TicketNotFoundException;
-import com.techv.vitor.mapper.TicketMapper;
+import com.techv.vitor.entity.enums.Finished;
+import com.techv.vitor.entity.enums.TypeTicket;
+import com.techv.vitor.exception.EntityNotFoundException;
+import com.techv.vitor.exception.TicketCreatedException;
+import com.techv.vitor.exception.TicketNotFoundException;
 import com.techv.vitor.repository.TicketRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class TicketService {
 
     private final TicketRepository ticketRepository;
 
-    private final TicketMapper mapper;
     private final UserService userService;
 
-    public TicketService(TicketRepository ticketRepository, TicketMapper mapper, UserService userService) {
+    public TicketService(TicketRepository ticketRepository, UserService userService) {
         this.ticketRepository = ticketRepository;
-        this.mapper = mapper;
         this.userService = userService;
     }
 
-    public Page<Ticket> findAll(int page, int quantity, JwtAuthenticationToken token) {
-        return ticketRepository.findAll(PageRequest.of(page, quantity));
+    public List<Ticket> findAll(JwtAuthenticationToken token) {
+        return ticketRepository.findAll();
     }
 
     public Ticket findById(Long id, JwtAuthenticationToken token) {
@@ -43,26 +42,32 @@ public class TicketService {
     @Transactional
     public TicketResponseDto createTicket(TicketRequestDto requestDto, JwtAuthenticationToken token) {
 
-        try {
+        Ticket ticket = new Ticket();
 
-            var ticket = mapper.toEntity(requestDto);
+        ticket.setRequester(requestDto.getRequester());
+        ticket.setTypeTicket(TypeTicket.FEATURE);
+        ticket.setText(requestDto.getText());
+        ticket.setCreatedAt(LocalDateTime.now());
 
-            ticketRepository.save(ticket);
+        ticketRepository.save(ticket);
 
-            var responseDto = mapper.toResponseDto(ticket);
+        TicketResponseDto responseDto = new TicketResponseDto();
 
-            if (responseDto.getRequester() == null || responseDto.getTypeTicket() == null) {
-                throw new TicketCreatedException("Have fields that can't be null..." + "Requester: " + responseDto.getRequester() + " | TypeTicket: " + responseDto.getTypeTicket(), HttpStatus.PRECONDITION_FAILED);
-            }
+        responseDto.setId(ticket.getId());
+        responseDto.setStatus(HttpStatus.CREATED);
+        responseDto.setStatusCode(HttpStatus.CREATED);
+        responseDto.setFinished(Finished.FALSE.getValue());
 
-            return responseDto;
+        responseDto.setText(ticket.getText());
+        responseDto.setRequester(ticket.getRequester());
+        responseDto.setTypeTicket(TypeTicket.FEATURE);
+        responseDto.setCreatedAt(LocalDateTime.now());
 
-        } catch (GenericException ex) {
-            throw new GenericException(
-                    "Something was wrong...Verify your request",
-                    HttpStatus.BAD_REQUEST);
+        if (responseDto.getRequester() == null || responseDto.getTypeTicket() == null) {
+            throw new TicketCreatedException("Have fields that can't be null..." + "Requester: " + responseDto.getRequester() + " | TypeTicket: " + responseDto.getTypeTicket(), HttpStatus.PRECONDITION_FAILED);
         }
 
+        return responseDto;
     }
 
     @Transactional
@@ -88,7 +93,14 @@ public class TicketService {
         ticketResponse.setUsers(usernameResponse);
         ticketRepository.save(ticketResponse);
 
-        return mapper.toResponseDto(ticketResponse);
+        TicketResponseDto ticketResponseDto = new TicketResponseDto();
+
+        ticketResponseDto.setId(ticketResponse.getId());
+        ticketResponseDto.setStatus(HttpStatus.OK);
+        ticketResponseDto.setStatusCode(HttpStatus.OK);
+        ticketResponseDto.setRequester(ticketResponse.getRequester());
+
+        return ticketResponseDto;
     }
 
     @Transactional
