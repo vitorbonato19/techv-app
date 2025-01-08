@@ -135,7 +135,7 @@ class UserServiceTest {
         });
         Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
-        var responseDto = userService.insertUsers(userRequest, token);
+        var responseDto = userService.insertUsers(userRequest);
         var response = userRepository.findById(responseDto.getId());
 
         Assertions.assertTrue(response.isPresent());
@@ -158,7 +158,7 @@ class UserServiceTest {
         user.setEmail(userRequest.getPassword());
         user.setLastModified(LocalDateTime.now());
 
-        Assertions.assertThrows(PasswordOrUsernameException.class, () -> userService.insertUsers(userRequest, token));
+        Assertions.assertThrows(PasswordOrUsernameException.class, () -> userService.insertUsers(userRequest));
     }
 
     @Test
