@@ -41,6 +41,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                                         .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
+
                                         .requestMatchers(HttpMethod.POST, "/users/auth/login").permitAll()
                                         .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
                                         .requestMatchers(HttpMethod.PUT, "/users/**").permitAll()

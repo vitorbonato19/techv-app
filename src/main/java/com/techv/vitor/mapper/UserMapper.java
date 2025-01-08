@@ -24,8 +24,6 @@ public interface UserMapper {
     @Mapping(target = "roles", ignore = true)
     User toEntity(UserRequestDto requestDto);
 
-    @Mapping(target = "status", ignore = true)
-    @Mapping(target = "statusCode", ignore = true)
     UserResponseDto toResponseDto(User userEntity);
 
     List<UserResponseDto> toResponseDtoList(List<User> userEntityList);
