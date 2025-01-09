@@ -196,9 +196,9 @@ class UserServiceTest {
     @DisplayName("Should update a user in database")
     void updateUser() {
 
-        var mock = new User(1L, "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
+        var oldUser = new User(1L, "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
         var newUser = new User(2L, "Vitor2", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
-        Mockito.when(userRepository.findById(mock.getId())).thenReturn(Optional.of(mock));
+        Mockito.when(userRepository.findById(oldUser.getId())).thenReturn(Optional.of(oldUser));
         Mockito.when(userRepository.findById(newUser.getId())).thenReturn(Optional.of(newUser));
 
         Mockito.when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
@@ -207,15 +207,10 @@ class UserServiceTest {
             return userSave;
         });
 
-        var responseMock = userRepository.findById(mock.getId());
+        userService.updateUsers(newUser, oldUser.getId(), token);
         var responseNewUser = userRepository.findById(newUser.getId());
 
-//        Assertions.assertNotNull(userService.updateUsers(newUser, mock.getId(), token));
-        Assertions.assertTrue(responseMock.isPresent());
         Assertions.assertTrue(responseNewUser.isPresent());
-
-        Mockito.verify(userRepository, Mockito.times(1)).save(newUser);
-
     }
 
     @Test

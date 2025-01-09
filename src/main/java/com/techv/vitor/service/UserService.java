@@ -167,7 +167,7 @@ public class UserService {
 
 
     @Transactional
-    public UserResponseDto updateUsers(User user, Long id , JwtAuthenticationToken token) {
+    public void updateUsers(User user, Long id , JwtAuthenticationToken token) {
 
         User newUser = findById(id);
         newUser.setUsername(user.getUsername());
@@ -176,10 +176,6 @@ public class UserService {
         newUser.setTickets(user.getTickets());
 
         userRepository.save(newUser);
-
-        var responseDto = mapper.toResponseDto(newUser);
-
-        return responseDto;
     }
 
 

@@ -88,8 +88,8 @@ public class UserController {
 
     @PutMapping("/update/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Data<UserResponseDto>> updateUsers(@RequestBody User user, @PathVariable Long id, JwtAuthenticationToken token) {
-        UserResponseDto dtoResponse = userService.updateUsers(user, id, token);
+    public ResponseEntity<Data<Void>> updateUsers(@RequestBody User user, @PathVariable Long id, JwtAuthenticationToken token) {
+        userService.updateUsers(user, id, token);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("Issuer", "api-techv.java");
         headers.add("Status", "200");
@@ -97,7 +97,7 @@ public class UserController {
         headers.add("StatusCode", "OK");
         headers.setDate(Instant.now());
         var headerData = data.convertToMap(headers);
-        var response = new Data<>(dtoResponse, headerData);
+        var response = new Data<>(null, headerData);
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
     }
 
