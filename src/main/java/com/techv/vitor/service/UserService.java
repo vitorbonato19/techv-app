@@ -159,13 +159,11 @@ public class UserService {
 
     @Transactional
     public Boolean verifyLogin(LoginRequest loginRequest) {
-        var user = userRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(
-                        () -> new EntityNotFoundException("User not found...Verify the username: " +
-                                loginRequest.getUsername(),
-                                HttpStatus.NOT_FOUND)
-                );
-        return loginRequest.getPassword().equals(user.getPassword());
+        Optional<User> user = Optional.ofNullable(userRepository.findByUsername(loginRequest.getUsername()).orElseThrow(
+                () -> new EntityNotFoundException("User not found, verify your request", HttpStatus.NOT_FOUND)
+        ));
+
+        return user.filter(value -> loginRequest.getPassword().equals(value.getPassword())).isPresent();
     }
 
 
