@@ -106,9 +106,8 @@ public class UserService {
                         HttpStatus.PRECONDITION_FAILED);
             }
 
-            var user = mapper.toEntity(requestDto);
-
-            user.setRoles(Set.of(roleRepository.findByName(Roles.Values.ADMIN.name())));
+            User user = mapper.toEntity(requestDto);
+            user.setLastModified(LocalDateTime.now());
 
             userRepository.save(user);
 
