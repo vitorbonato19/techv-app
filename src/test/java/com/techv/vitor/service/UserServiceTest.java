@@ -103,7 +103,6 @@ class UserServiceTest {
         User mock = new User(1L, "Vitor", "teste@email.com", "12345", Integrated.TRUE, LocalDateTime.now());
         Mockito.when(userRepository.findByUsername(mock.getUsername())).thenReturn(Optional.of(mock));
         var request = new LoginRequest(mock.getUsername(), mock.getPassword());
-        Mockito.when(userService.verifyLogin(request)).thenReturn(Boolean.TRUE);
         var response = userService.verifyLogin(request);
 
         Assertions.assertTrue(response);
