@@ -134,14 +134,18 @@ public class UserService {
         Instant now = Instant.now();
         Long expiresIn = 150L;
 
-//        var admin = userRepository.findAdmin(user.get().getId());
+        var admin = userRepository.findAdmin(user.get().getId());
+
+        if(admin.isEmpty()) {
+
+        }
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("api.java")
                 .subject(user.get().getId().toString())
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expiresIn))
-//                .claim("scope", admin)
+                .claim("scope", admin)
                 .build();
 
         var jwt = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
