@@ -15,7 +15,7 @@ public class HealthController {
 
     private static final Logger log = LoggerFactory.getLogger(HealthController.class);
 
-    private UserService userService;
+    private final UserService userService;
 
     public HealthController(UserService userService) {
         this.userService = userService;
