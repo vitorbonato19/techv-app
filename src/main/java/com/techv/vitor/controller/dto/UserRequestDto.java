@@ -6,16 +6,26 @@ public class UserRequestDto {
     private String email;
     private String password;
     private String zipCode;
+    private Boolean admin;
 
     public UserRequestDto() {
 
     }
 
-    public UserRequestDto(String username, String email, String password, String zipCode) {
+    public UserRequestDto(String username, String email, String password, String zipCode, Boolean admin) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.zipCode = zipCode;
+        this.admin = admin;
+    }
+
+    public Boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
     }
 
     public String getZipCode() {

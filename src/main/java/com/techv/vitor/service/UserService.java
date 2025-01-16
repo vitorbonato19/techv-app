@@ -109,10 +109,15 @@ public class UserService {
             User user = mapper.toEntity(requestDto);
             user.setLastModified(LocalDateTime.now());
 
+            if (requestDto.isAdmin()) {
+                user.setRoles(Set.of((roleRepository.findByName("ADMIN"))));
+            } else {
+                user.setRoles(Set.of((roleRepository.findByName("NOT_ADMIN"))));
+            }
+
             userRepository.save(user);
 
             var responseDto = mapper.toResponseDto(user);
-
 
             return responseDto;
 
@@ -134,18 +139,14 @@ public class UserService {
         Instant now = Instant.now();
         Long expiresIn = 150L;
 
-        var admin = userRepository.findAdmin(user.get().getId());
-
-        if(admin.isEmpty()) {
-
-        }
+        var isAdmin = userRepository.findAdmin(user.get().getId());
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("api.java")
                 .subject(user.get().getId().toString())
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expiresIn))
-                .claim("scope", admin)
+                .claim("scope", isAdmin)
                 .build();
 
         var jwt = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
