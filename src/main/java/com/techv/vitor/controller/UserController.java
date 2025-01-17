@@ -37,10 +37,11 @@ public class UserController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    public ResponseEntity<Data<List<User>>> findAll(JwtAuthenticationToken token) {
-        var clients = userService.findAll(token);
+    public ResponseEntity<Data<List<User>>> findAll(@RequestHeader JwtAuthenticationToken token) {
+        var clients = userService.findAll();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("issuer", "api-techv.java");
+        headers.add("Authorization", "" + token.getToken());
         headers.setDate(Instant.now());
         var headerData = data.convertToMap(headers);
         var response = new Data<>(clients, headerData);
@@ -49,10 +50,11 @@ public class UserController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Data<User>> findById(@PathVariable Long id) {
+    public ResponseEntity<Data<User>> findById(@PathVariable Long id, JwtAuthenticationToken token) {
         var clients = userService.findById(id);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("issuer", "api-techv.java");
+        headers.add("Authorization", "" + token.getToken());
         headers.setDate(Instant.now());
         var headerData = data.convertToMap(headers);
         var response = new Data<>(clients, headerData);
@@ -93,7 +95,7 @@ public class UserController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("Issuer", "api-techv.java");
         headers.add("Status", "200");
-        headers.add("Auth-Token", "" + token.getToken());
+        headers.add("Authorization", "" + token.getToken());
         headers.add("StatusCode", "OK");
         headers.setDate(Instant.now());
         var headerData = data.convertToMap(headers);
@@ -106,7 +108,7 @@ public class UserController {
     public ResponseEntity<ResponseEntity<Void>> deleteUserById(@PathVariable Long id, JwtAuthenticationToken token) {
         userService.deleteUser(id, token);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Auth-Token", "" + token.getToken());
+        headers.add("Authorization", "" + token.getToken());
         headers.add("issuer", "api-techv.java");
         headers.setDate(Instant.now());
         var headerData = data.convertToMap(headers);

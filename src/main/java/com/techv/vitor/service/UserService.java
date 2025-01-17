@@ -62,7 +62,7 @@ public class UserService {
         this.mapper = mapper;
     }
 
-    public List<User> findAll(JwtAuthenticationToken token) {
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 
