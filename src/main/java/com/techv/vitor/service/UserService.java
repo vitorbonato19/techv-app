@@ -32,6 +32,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -139,14 +140,14 @@ public class UserService {
         Instant now = Instant.now();
         Long expiresIn = 150L;
 
-        var isAdmin = userRepository.findAdmin(user.get().getId());
+        var role = user.get().getRoles().stream().map(Roles::getName).collect(Collectors.joining(" "));
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("api.java")
                 .subject(user.get().getId().toString())
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expiresIn))
-                .claim("scope", isAdmin)
+                .claim("role", role)
                 .build();
 
         var jwt = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

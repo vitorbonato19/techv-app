@@ -1,0 +1,22 @@
+meta {
+  name: PostLOgin
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8080/users/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "username": "vitor",
+      "password": "123456"
+  }
+}
+
+vars:post-response {
+  token: res.body.accessToken
+}

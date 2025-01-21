@@ -45,6 +45,7 @@ public class SecurityConfig {
                                         .requestMatchers(HttpMethod.GET, "/health").permitAll()
                                         .requestMatchers(HttpMethod.POST, "/users/auth/login").permitAll()
                                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/users").permitAll()
                                         .requestMatchers("/swagger-ui/**",
                                                 "/v3/api-docs/**",
                                                 "/swagger-resources/**",

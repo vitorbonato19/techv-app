@@ -7,11 +7,14 @@ import com.techv.vitor.controller.dto.UserResponseDto;
 import com.techv.vitor.entity.Data;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +24,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+
+    private final static Logger log = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
 
@@ -36,15 +41,15 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    public ResponseEntity<Data<List<User>>> findAll(@RequestHeader JwtAuthenticationToken token) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Data<List<User>>> findAll() {
         var clients = userService.findAll();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("issuer", "api-techv.java");
-        headers.add("Authorization", "" + token.getToken());
         headers.setDate(Instant.now());
+//        headers.add("token", "" + token);
         var headerData = data.convertToMap(headers);
         var response = new Data<>(clients, headerData);
+        log.info("HTTP METHOD GET OK!");
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
     }
 
