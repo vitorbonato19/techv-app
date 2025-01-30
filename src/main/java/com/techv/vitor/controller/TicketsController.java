@@ -7,10 +7,7 @@ import com.techv.vitor.entity.Ticket;
 import com.techv.vitor.exception.TicketNotFoundException;
 import com.techv.vitor.repository.TicketRepository;
 import com.techv.vitor.service.TicketService;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -19,7 +16,7 @@ import java.time.Instant;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/tickets")
+@RequestMapping("/api/tickets")
 public class TicketsController {
 
     private final TicketRepository ticketRepository;
@@ -39,11 +36,11 @@ public class TicketsController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Data<List<Ticket>>> findAll() {
+    public ResponseEntity<Data<List<Ticket>>> findAll(@RequestHeader("Authorization") String token) {
         var tickets = ticketRepository.findAll();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("issuer", "api-techv.java");
         headers.setDate(Instant.now());
+        headers.setAccessControlAllowMethods(List.of(HttpMethod.GET));
         var headerData = data.convertToMap(headers);
         var response = new Data<>(tickets, headerData);
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
@@ -51,14 +48,11 @@ public class TicketsController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Data<Ticket>> findById(@PathVariable Long id) {
-         var tickets = ticketRepository.findById(id).orElseThrow(() ->
-                 new TicketNotFoundException(
-                         "Ticket nout found, verify your id...",
-                         HttpStatus.NOT_FOUND));
+    public ResponseEntity<Data<Ticket>> findById(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+        var tickets = ticketService.findById(id);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("issuer", "api-techv.java");
         headers.setDate(Instant.now());
+        headers.setAccessControlAllowMethods(List.of(HttpMethod.GET));
         var headerData = data.convertToMap(headers);
         var response = new Data<>(tickets, headerData);
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
@@ -66,11 +60,11 @@ public class TicketsController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Data<TicketResponseDto>> createTicket(@RequestBody TicketRequestDto ticketRequestDto, JwtAuthenticationToken token) {
-        var tickets = ticketService.createTicket(ticketRequestDto, token);
+    public ResponseEntity<Data<TicketResponseDto>> createTicket(@RequestHeader("Authorization") String token, @RequestBody TicketRequestDto ticketRequestDto) {
+        var tickets = ticketService.createTicket(ticketRequestDto);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("issuer", "api-techv.java");
-        headers.add("userID", "" + tickets.getId());
+        headers.setDate(Instant.now());
+        headers.setAccessControlAllowMethods(List.of(HttpMethod.POST));
         headers.setDate(Instant.now());
         var headerData = data.convertToMap(headers);
         var response = new Data<>(tickets, headerData);
@@ -79,11 +73,11 @@ public class TicketsController {
 
     @PutMapping("/agree/{userUUID}/{ticketId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Data<TicketResponseDto>> agreeTicket(@PathVariable Long userId, @PathVariable Long ticketId, JwtAuthenticationToken token) {
-        var tickets = ticketService.agreeTicket(userId, ticketId, token);
+    public ResponseEntity<Data<TicketResponseDto>> agreeTicket(@RequestHeader("Authorization") String token, @PathVariable Long userId, @PathVariable Long ticketId) {
+        var tickets = ticketService.agreeTicket(userId, ticketId);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("issuer", "api-techv.java");
         headers.setDate(Instant.now());
+        headers.setAccessControlAllowMethods(List.of(HttpMethod.PUT));
         var headerData = data.convertToMap(headers);
         var response = new Data<>(tickets, headerData);
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
@@ -91,11 +85,11 @@ public class TicketsController {
 
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<ResponseEntity<Void>> deleteTicketById(@PathVariable Long id, JwtAuthenticationToken token) {
-        ticketService.deleteTicketById(id, token);
+    public ResponseEntity<ResponseEntity<Void>> deleteTicketById(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+        ticketService.deleteTicketById(id);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("issuer", "api-techv.java");
         headers.setDate(Instant.now());
+        headers.setAccessControlAllowMethods(List.of(HttpMethod.DELETE));
         return new ResponseEntity<>(null, headers, HttpStatus.NO_CONTENT);
     }
 }

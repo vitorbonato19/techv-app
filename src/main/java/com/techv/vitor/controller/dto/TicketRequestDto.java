@@ -7,17 +7,15 @@ public class TicketRequestDto {
     private String requester;
     private Integer typeTicket;
     private String text;
-    private LocalDateTime createdAt;
 
     public TicketRequestDto() {
 
     }
 
-    public TicketRequestDto(String requester, Integer typeTicket, String text, LocalDateTime createdAt) {
+    public TicketRequestDto(String requester, Integer typeTicket, String text) {
         this.requester = requester;
         this.typeTicket = typeTicket;
         this.text = text;
-        this.createdAt = createdAt;
     }
 
     public String getRequester() {
@@ -44,11 +42,4 @@ public class TicketRequestDto {
         this.text = text;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }

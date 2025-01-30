@@ -24,7 +24,6 @@ public class TicketExceptionHandler {
         handlerResponse.put("status", ex.getHttpStatus().value());
         handlerResponse.put("error", ex.getHttpStatus().getReasonPhrase());
         handlerResponse.put("caused by", ex.getMessage());
-        handlerResponse.put("path", request.getRequestURI());
 
         return new ResponseEntity<>(handlerResponse, ex.getHttpStatus());
     }

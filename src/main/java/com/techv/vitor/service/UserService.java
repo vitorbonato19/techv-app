@@ -6,7 +6,6 @@ import com.techv.vitor.controller.dto.UserRequestDto;
 import com.techv.vitor.controller.dto.UserResponseDto;
 import com.techv.vitor.entity.Cep;
 import com.techv.vitor.entity.Roles;
-import com.techv.vitor.entity.Sector;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.exception.EntityNotFoundException;
 import com.techv.vitor.exception.PasswordOrUsernameException;
@@ -19,10 +18,10 @@ import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -45,6 +44,8 @@ public class UserService {
 
     private final SectorRepository sectorRepository;
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     private final JwtEncoder jwtEncoder;
 
     private final UserMapper mapper;
@@ -54,11 +55,12 @@ public class UserService {
 
     public UserService(UserRepository userRepository,
                        RoleRepository roleRepository, TicketRepository ticketRepository,
-                       SectorRepository sectorRepository, JwtEncoder jwtEncoder, UserMapper mapper) {
+                       SectorRepository sectorRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtEncoder jwtEncoder, UserMapper mapper) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.ticketRepository = ticketRepository;
         this.sectorRepository = sectorRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.jwtEncoder = jwtEncoder;
         this.mapper = mapper;
     }
@@ -116,6 +118,8 @@ public class UserService {
                 user.setRoles(Set.of((roleRepository.findByName("NOT_ADMIN"))));
             }
 
+            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+
             userRepository.save(user);
 
             var responseDto = mapper.toResponseDto(user);
@@ -137,17 +141,22 @@ public class UserService {
             throw new EntityNotFoundException("Credenciais invalidas.", HttpStatus.FORBIDDEN);
         }
 
-        Instant now = Instant.now();
-        Long expiresIn = 150L;
+        var now = Instant.now();
+        var expire = 150L;
 
-        var role = user.get().getRoles().stream().map(Roles::getName).collect(Collectors.joining(" "));
+        var auth  = user.get().getRoles().
+                stream()
+                .map(Roles::getName)
+                .collect(Collectors.joining(" "));
 
-        JwtClaimsSet claims = JwtClaimsSet.builder()
+        System.out.println(auth);
+
+        var claims = JwtClaimsSet.builder()
                 .issuer("api.java")
                 .subject(user.get().getId().toString())
                 .issuedAt(now)
-                .expiresAt(now.plusSeconds(expiresIn))
-                .claim("role", role)
+                .expiresAt(now.plusSeconds(expire))
+                .claim("auth", auth)
                 .build();
 
         var jwt = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
@@ -155,7 +164,7 @@ public class UserService {
         var response = new LoginResponse();
 
         response.setAccessToken(jwt);
-        response.setExpiresIn(expiresIn);
+        response.setExpiresIn(expire);
         response.setCreatedAt(now);
 
         return response;
@@ -168,12 +177,14 @@ public class UserService {
                 () -> new EntityNotFoundException("User not found, verify your request", HttpStatus.NOT_FOUND)
         ));
 
-        return user.filter(value -> loginRequest.getPassword().equals(value.getPassword())).isPresent();
+        return user.filter(response -> bCryptPasswordEncoder
+                .matches(
+                        loginRequest.getPassword(), user.get().getPassword())).isPresent();
     }
 
 
     @Transactional
-    public void updateUsers(User user, Long id , JwtAuthenticationToken token) {
+    public void updateUsers(User user, Long id) {
 
         User newUser = findById(id);
         newUser.setUsername(user.getUsername());
@@ -186,7 +197,7 @@ public class UserService {
 
 
     @Transactional
-    public void deleteUser(Long id, JwtAuthenticationToken token) {
+    public void disable(Long id) {
 
         var userResponse = userRepository.findById(id);
 

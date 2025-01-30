@@ -25,7 +25,6 @@ public class EntityNotFoundExcpetionHandler {
         response.put("statusCode", ex.getHttpStatus().value());
         response.put("error", ex.getMessage());
         response.put("cause", "Not exists");
-        response.put("path", request.getRequestURI());
 
         return new ResponseEntity<>(response, ex.getHttpStatus());
     }

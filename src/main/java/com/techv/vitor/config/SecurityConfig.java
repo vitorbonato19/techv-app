@@ -45,7 +45,6 @@ public class SecurityConfig {
                                         .requestMatchers(HttpMethod.GET, "/health").permitAll()
                                         .requestMatchers(HttpMethod.POST, "/users/auth/login").permitAll()
                                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                                        .requestMatchers(HttpMethod.GET, "/users").permitAll()
                                         .requestMatchers("/swagger-ui/**",
                                                 "/v3/api-docs/**",
                                                 "/swagger-resources/**",
@@ -53,26 +52,12 @@ public class SecurityConfig {
                                                 "/v2/api-docs/**",
                                                 "/webjars/**").permitAll()
                                         .anyRequest().authenticated())
-                .csrf((csrf -> {
-                    try {
-                        csrf.disable()
-                        .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
-                        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }));
+
+                .csrf(csrf -> csrf.disable())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
         return http.build();
-    }
-
-    private JwtAuthenticationConverter jwtAuthenticationConverter() {
-        var authoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        authoritiesConverter.setAuthorityPrefix("SCOPE_");
-        authoritiesConverter.setAuthoritiesClaimName("scope");
-
-        var jwtConverter = new JwtAuthenticationConverter();
-        jwtConverter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
-        return jwtConverter;
     }
 
     @Bean
@@ -83,7 +68,7 @@ public class SecurityConfig {
     @Bean
     public JwtEncoder jwtEncoder() {
         JWK jwk = new RSAKey.Builder(this.publicKey).privateKey(privateKey).build();
-        ImmutableJWKSet jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+        var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
     }
 

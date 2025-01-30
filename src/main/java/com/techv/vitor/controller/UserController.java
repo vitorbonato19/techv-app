@@ -7,19 +7,21 @@ import com.techv.vitor.controller.dto.UserResponseDto;
 import com.techv.vitor.entity.Data;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.service.UserService;
+import jakarta.websocket.server.PathParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collector;
 
 @RestController
 @RequestMapping("/users")
@@ -39,14 +41,13 @@ public class UserController {
         this.headers = headers;
     }
 
-    @GetMapping
+    @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Data<List<User>>> findAll() {
+    public ResponseEntity<Data<List<User>>> findAll(@RequestHeader("Authorization") String token) {
         var clients = userService.findAll();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setDate(Instant.now());
-//        headers.add("token", "" + token);
+        headers.setAccessControlAllowMethods(List.of(HttpMethod.GET));
         var headerData = data.convertToMap(headers);
         var response = new Data<>(clients, headerData);
         log.info("HTTP METHOD GET OK!");
@@ -55,12 +56,11 @@ public class UserController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Data<User>> findById(@PathVariable Long id, JwtAuthenticationToken token) {
+    public ResponseEntity<Data<User>> findById(@RequestHeader("Authorization") String token, @PathVariable Long id) {
         var clients = userService.findById(id);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("issuer", "api-techv.java");
-        headers.add("Authorization", "" + token.getToken());
         headers.setDate(Instant.now());
+        headers.setAccessControlAllowMethods(List.of(HttpMethod.GET));
         var headerData = data.convertToMap(headers);
         var response = new Data<>(clients, headerData);
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
@@ -71,8 +71,8 @@ public class UserController {
     public ResponseEntity<Data<LoginResponse>> userLogin(@RequestBody LoginRequest loginRequest) {
         var responseLogin = userService.login(loginRequest);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("issuer", "api-techv.java");
         headers.setDate(Instant.now());
+        headers.setAccessControlAllowMethods(List.of(HttpMethod.POST));
         var headerData = data.convertToMap(headers);
         var response = new Data<>(responseLogin, headerData);
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
@@ -83,11 +83,8 @@ public class UserController {
     public ResponseEntity<Data<UserResponseDto>> insertUsers(@RequestBody UserRequestDto requestDto) {
         UserResponseDto dtoResponse = userService.insertUsers(requestDto);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Issuer", "api-techv.java");
-        headers.add("Status", "201");
-        headers.add("StatusCode", "CREATED");
-        headers.add("User-Id", "" + dtoResponse.getId());
         headers.setDate(Instant.now());
+        headers.setAccessControlAllowMethods(List.of(HttpMethod.POST));
         var headerData = data.convertToMap(headers);
         var response = new Data<>(dtoResponse, headerData);
         return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
@@ -95,14 +92,11 @@ public class UserController {
 
     @PutMapping("/update/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Data<Void>> updateUsers(@RequestBody User user, @PathVariable Long id, JwtAuthenticationToken token) {
-        userService.updateUsers(user, id, token);
+    public ResponseEntity<Data<Void>> updateUsers(@RequestHeader("Authorization") String token, @RequestBody User user, @PathVariable Long id) {
+        userService.updateUsers(user, id);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Issuer", "api-techv.java");
-        headers.add("Status", "200");
-        headers.add("Authorization", "" + token.getToken());
-        headers.add("StatusCode", "OK");
         headers.setDate(Instant.now());
+        headers.setAccessControlAllowMethods(List.of(HttpMethod.PUT));
         var headerData = data.convertToMap(headers);
         var response = new Data<>(null, headerData);
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
@@ -110,13 +104,14 @@ public class UserController {
 
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<ResponseEntity<Void>> deleteUserById(@PathVariable Long id, JwtAuthenticationToken token) {
-        userService.deleteUser(id, token);
+    public ResponseEntity<Data<String>> deleteUserById(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+        userService.disable(id);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Authorization", "" + token.getToken());
-        headers.add("issuer", "api-techv.java");
+        headers.setDate(Instant.now());
+        headers.setAccessControlAllowMethods(List.of(HttpMethod.DELETE));
         headers.setDate(Instant.now());
         var headerData = data.convertToMap(headers);
-        return new ResponseEntity<>(null, headers, HttpStatus.NO_CONTENT);
+        var response = new Data<>("NO-CONTENT", headerData);
+        return new ResponseEntity<>(response, headers, HttpStatus.NO_CONTENT);
     }
 }

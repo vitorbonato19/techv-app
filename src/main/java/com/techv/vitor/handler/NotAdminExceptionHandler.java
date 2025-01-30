@@ -25,7 +25,6 @@ public class NotAdminExceptionHandler {
         response.put("statusError", ex.getHttpStatus().getReasonPhrase());
         response.put("error", ex.getMessage());
         response.put("cause", ex.getCause());
-        response.put("path", request.getRequestURI());
 
         return new ResponseEntity<>(response, ex.getHttpStatus());
     }
