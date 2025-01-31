@@ -24,7 +24,7 @@ public class TicketNotFoundExcpetionHandler {
         response.put("status", ex.getHttpStatus().value());
         response.put("statusError", ex.getHttpStatus().getReasonPhrase());
         response.put("error", ex.getMessage());
-        response.put("cause", "TicketId");
+
 
         return new ResponseEntity<>(response, ex.getHttpStatus());
     }

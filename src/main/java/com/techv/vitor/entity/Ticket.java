@@ -24,31 +24,33 @@ public class Ticket {
     private String text;
     @Column(columnDefinition = "TEXT")
     private String reply;
-    private Integer typeTicket;
+    @Enumerated(EnumType.STRING)
+    private TypeTicket type;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime finishedAt;
-    private Integer finished;
+    @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean finished;
 
     @ManyToOne
-    @JoinColumn(name = "id_user")
+    @JoinColumn(name = "userid")
     private User users;
 
     public Ticket() {
 
     }
 
-    public Ticket(Long id, String requester, String analyst, String text, String reply, TypeTicket typeTicket, LocalDateTime createdAt, LocalDateTime finishedAt, Finished finished, User users) {
+    public Ticket(Long id, String requester, String analyst, String text, String reply, TypeTicket type, LocalDateTime createdAt, LocalDateTime finishedAt, boolean finished, User users) {
         this.id = id;
         this.requester = requester;
         this.analyst = analyst;
         this.text = text;
         this.reply = reply;
-        setTypeTicket(typeTicket);
+        this.type = type;
         this.createdAt = createdAt;
         this.finishedAt = finishedAt;
-        setFinished(finished);
+        this.finished = finished;
         this.users = users;
     }
 
@@ -92,14 +94,12 @@ public class Ticket {
         this.reply = reply;
     }
 
-    public Integer getTypeTicket() {
-        return typeTicket;
+    public TypeTicket getType() {
+        return type;
     }
 
-    public void setTypeTicket(TypeTicket typeTicket) {
-        if (typeTicket != null) {
-            this.typeTicket = typeTicket.getTicketValue();
-        }
+    public void setType(TypeTicket type) {
+        this.type = type;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -118,14 +118,12 @@ public class Ticket {
         this.finishedAt = finishedAt;
     }
 
-    public Integer getFinished() {
+    public boolean isFinished() {
         return finished;
     }
 
-    public void setFinished(Finished finished) {
-        if (finished != null) {
-            this.finished = finished.getValue();
-        }
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 
     @JsonIgnore

@@ -1,20 +1,22 @@
 package com.techv.vitor.controller.dto;
 
+import com.techv.vitor.entity.enums.TypeTicket;
+
 import java.time.LocalDateTime;
 
 public class TicketRequestDto {
 
     private String requester;
-    private Integer typeTicket;
+    private TypeTicket type;
     private String text;
 
     public TicketRequestDto() {
 
     }
 
-    public TicketRequestDto(String requester, Integer typeTicket, String text) {
+    public TicketRequestDto(String requester, TypeTicket type, String text) {
         this.requester = requester;
-        this.typeTicket = typeTicket;
+        this.type = type;
         this.text = text;
     }
 
@@ -26,12 +28,12 @@ public class TicketRequestDto {
         this.requester = requester;
     }
 
-    public Integer getTypeTicket() {
-        return typeTicket;
+    public TypeTicket getType() {
+        return type;
     }
 
-    public void setTypeTicket(Integer typeTicket) {
-        this.typeTicket = typeTicket;
+    public void setType(TypeTicket type) {
+        this.type = type;
     }
 
     public String getText() {
@@ -41,5 +43,4 @@ public class TicketRequestDto {
     public void setText(String text) {
         this.text = text;
     }
-
 }

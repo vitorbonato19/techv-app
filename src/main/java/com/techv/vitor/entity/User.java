@@ -31,13 +31,14 @@ public class User {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModified;
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "usersroles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JoinTable(name = "usersroles", joinColumns = @JoinColumn(name = "userid"), inverseJoinColumns = @JoinColumn(name = "roleid"))
     private Set<Roles> roles;
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "user_sector", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "sector_id"))
+    @JoinTable(name = "usersector", joinColumns = @JoinColumn(name = "userid"), inverseJoinColumns = @JoinColumn(name = "sectorid"))
     private Set<Sector> sector;
 
     @OneToMany(mappedBy = "users")
+    @JoinColumn(name = "ticket_id")
     private List<Ticket> tickets;
 
     public User() {

@@ -12,7 +12,6 @@ import com.techv.vitor.exception.TicketNotFoundException;
 import com.techv.vitor.repository.TicketRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
