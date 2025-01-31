@@ -22,8 +22,8 @@ public class TicketExceptionHandler {
 
         Map<String, Object> handlerResponse = new HashMap<>();
         handlerResponse.put("status", ex.getHttpStatus().value());
-        handlerResponse.put("error", ex.getHttpStatus().getReasonPhrase());
-        handlerResponse.put("caused by", ex.getMessage());
+        handlerResponse.put("statusError", ex.getHttpStatus().getReasonPhrase());
+        handlerResponse.put("message", ex.getMessage());
 
         return new ResponseEntity<>(handlerResponse, ex.getHttpStatus());
     }

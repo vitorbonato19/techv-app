@@ -23,8 +23,7 @@ public class TicketNotFoundExcpetionHandler {
         Map<String, Object> response = new HashMap<>();
         response.put("status", ex.getHttpStatus().value());
         response.put("statusError", ex.getHttpStatus().getReasonPhrase());
-        response.put("error", ex.getMessage());
-
+        response.put("message", ex.getMessage());
 
         return new ResponseEntity<>(response, ex.getHttpStatus());
     }

@@ -21,10 +21,9 @@ public class EntityNotFoundExcpetionHandler {
     public ResponseEntity<Map<String, Object>> entityNotFound(EntityNotFoundException ex, HttpServletRequest request) {
 
         Map<String, Object> response = new HashMap<>();
-        response.put("status", ex.getHttpStatus());
-        response.put("statusCode", ex.getHttpStatus().value());
-        response.put("error", ex.getMessage());
-        response.put("cause", "Not exists");
+        response.put("status", ex.getHttpStatus().value());
+        response.put("statusError", ex.getHttpStatus().getReasonPhrase());
+        response.put("message", ex.getMessage());
 
         return new ResponseEntity<>(response, ex.getHttpStatus());
     }
