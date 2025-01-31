@@ -1,10 +1,10 @@
-logging:
-  level:
-    org:
-      springframework:
-        security: DEBUG
-        web: DEBUG
-        authentication: DEBUG
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        security: DEBUG
+#        web: DEBUG
+#        authentication: DEBUG
 
 spring:
   datasource:
@@ -23,3 +23,5 @@ jwt:
     key: classpath:public_key
   private:
     key: classpath:private_key
+
+debug: true

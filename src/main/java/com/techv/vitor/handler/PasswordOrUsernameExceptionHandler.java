@@ -18,7 +18,7 @@ public class PasswordOrUsernameExceptionHandler {
     @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
     @ResponseBody
     @ExceptionHandler(PasswordOrUsernameException.class)
-    public ResponseEntity<Map<String, Object>> handler(PasswordOrUsernameException ex, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> handler(PasswordOrUsernameException ex) {
 
         Map<String, Object> handlerResponse = new HashMap<>();
         handlerResponse.put("status", ex.getHttpStatus().value());

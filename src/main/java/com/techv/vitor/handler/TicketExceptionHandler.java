@@ -18,7 +18,7 @@ public class TicketExceptionHandler {
     @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
     @ResponseBody
     @ExceptionHandler(TicketCreatedException.class)
-    public ResponseEntity<Map<String, Object>> handler(TicketCreatedException ex, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> handler(TicketCreatedException ex) {
 
         Map<String, Object> handlerResponse = new HashMap<>();
         handlerResponse.put("status", ex.getHttpStatus().value());

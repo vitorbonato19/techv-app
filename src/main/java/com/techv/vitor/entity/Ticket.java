@@ -27,8 +27,10 @@ public class Ticket {
     @Enumerated(EnumType.STRING)
     private TypeTicket type;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(columnDefinition = "DATETIME ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(columnDefinition = "DATETIME DEFAULT '2000-01-01 00:00:00'")
     private LocalDateTime finishedAt;
     @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean finished;

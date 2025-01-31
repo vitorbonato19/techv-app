@@ -23,7 +23,7 @@ public class EntityNotFoundExcpetionHandler {
         Map<String, Object> response = new HashMap<>();
         response.put("status", ex.getHttpStatus().value());
         response.put("statusError", ex.getHttpStatus().getReasonPhrase());
-        response.put("message", ex.getMessage());
+        response.put("message", ex.getMessage());   
 
         return new ResponseEntity<>(response, ex.getHttpStatus());
     }

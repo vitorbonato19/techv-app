@@ -11,6 +11,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.ERROR)
@@ -22,9 +23,10 @@ public interface TicketMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "finishedAt", ignore = true)
     @Mapping(target = "finished", ignore = true)
+    @Mapping(target = "users", ignore = true)
     Ticket toEntity(TicketRequestDto requestDto);
 
-    TicketResponseDto toRespondeDto(Ticket ticket);
+    TicketResponseDto toResponseDto(Ticket ticket);
 
-    List<TicketResponseDto> toRespondeDtoList(List<Ticket> userEntityArray);
+    List<TicketResponseDto> toResponseDtoList(List<Ticket> userEntityArray);
 }

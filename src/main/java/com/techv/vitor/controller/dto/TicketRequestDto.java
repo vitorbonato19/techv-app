@@ -2,8 +2,6 @@ package com.techv.vitor.controller.dto;
 
 import com.techv.vitor.entity.enums.TypeTicket;
 
-import java.time.LocalDateTime;
-
 public class TicketRequestDto {
 
     private String requester;

@@ -65,7 +65,6 @@ public class TicketsController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setDate(Instant.now());
         headers.setAccessControlAllowMethods(List.of(HttpMethod.POST));
-        headers.setDate(Instant.now());
         var headerData = data.convertToMap(headers);
         var response = new Data<>(tickets, headerData);
         return new ResponseEntity<>(response, headers, HttpStatus.CREATED);

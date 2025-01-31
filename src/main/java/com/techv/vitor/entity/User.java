@@ -38,7 +38,6 @@ public class User {
     private Set<Sector> sector;
 
     @OneToMany(mappedBy = "users")
-    @JoinColumn(name = "ticket_id")
     private List<Ticket> tickets;
 
     public User() {

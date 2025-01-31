@@ -18,7 +18,7 @@ public class NotAdminExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
     @ExceptionHandler(NotAdminException.class)
-    public ResponseEntity<Map<String, Object>> entityNotFound(NotAdminException ex, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> entityNotFound(NotAdminException ex) {
 
         Map<String, Object> response = new HashMap<>();
         response.put("status", ex.getHttpStatus().value());
