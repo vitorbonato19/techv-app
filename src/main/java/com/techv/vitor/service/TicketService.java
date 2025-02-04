@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -70,8 +71,8 @@ public class TicketService {
             var user = userService.findById(userId);
             var ticket = findById(ticketId);
 
-            if (user.getUsername().equalsIgnoreCase(ticket.get().getAnalyst())) {
-                throw new InvalidRequestException("ticket alredy's have a analyst.", HttpStatus.BAD_REQUEST);
+            if (Objects.equals(user.getId(), ticket.get().getId())) {
+                throw new InvalidRequestException("ticket alredy's have a analyst.", HttpStatus.CONFLICT);
             }
 
             ticket.get().setAnalyst(user.getUsername());

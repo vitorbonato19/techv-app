@@ -6,6 +6,7 @@ import com.techv.vitor.entity.enums.Finished;
 import com.techv.vitor.entity.enums.TypeTicket;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -28,6 +29,7 @@ public class Ticket {
     private TypeTicket type;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(columnDefinition = "DATETIME ON UPDATE CURRENT_TIMESTAMP")
+    @CreationTimestamp
     private LocalDateTime createdAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(columnDefinition = "DATETIME DEFAULT '2000-01-01 00:00:00'")

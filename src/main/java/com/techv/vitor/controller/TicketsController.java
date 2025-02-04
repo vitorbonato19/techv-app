@@ -16,7 +16,7 @@ import java.time.Instant;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/tickets")
+@RequestMapping("/tickets")
 public class TicketsController {
 
     private final TicketRepository ticketRepository;
@@ -70,10 +70,10 @@ public class TicketsController {
         return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("/agree/{userUUID}/{ticketId}")
+    @PutMapping("/agree/{user}/{ticket}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Data<TicketResponseDto>> agreeTicket(@RequestHeader("Authorization") String token, @PathVariable Long userId, @PathVariable Long ticketId) {
-        var tickets = ticketService.agreeTicket(userId, ticketId);
+    public ResponseEntity<Data<TicketResponseDto>> agreeTicket(@RequestHeader("Authorization") String token, @PathVariable Long user, @PathVariable Long ticket) {
+        var tickets = ticketService.agreeTicket(user, ticket);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setDate(Instant.now());
         headers.setAccessControlAllowMethods(List.of(HttpMethod.PUT));
