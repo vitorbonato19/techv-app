@@ -12,11 +12,11 @@ post {
 
 body:json {
   {
-      "username": "vitor",
-      "password": "123456"
+      "username": "admin",
+      "password": "123"
   }
 }
 
 vars:post-response {
-  token: res.body.accessToken
+  token: res.body.data.accessToken
 }

@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
                             `password` varchar(255) DEFAULT NULL,
                             `zip_code` varchar(255) DEFAULT NULL,
                             `last_modified` datetime(6) DEFAULT NULL,
-                            `integrated` int DEFAULT NULL,
+                            `integrated` int DEFAULT 0,
                             PRIMARY KEY (`id`),
                             UNIQUE KEY `UKm2dvbwfge291euvmk6vkkocao` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -56,4 +56,3 @@ CREATE TABLE IF NOT EXISTS `tickets` (
                            KEY `FKcd0d9n0i6v09e25ve0dc1tbw0` (`userid`),
                            CONSTRAINT `FKcd0d9n0i6v09e25ve0dc1tbw0` FOREIGN KEY (`userid`) REFERENCES `usuarios` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-

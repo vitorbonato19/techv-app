@@ -4,8 +4,12 @@ meta {
   seq: 10
 }
 
-get {
-  url: 
+put {
+  url: http://localhost:8080/tickets/agree/2/3
   body: none
-  auth: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
 }

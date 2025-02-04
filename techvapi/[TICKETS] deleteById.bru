@@ -1,0 +1,15 @@
+meta {
+  name: [TICKETS] deleteById
+  type: http
+  seq: 11
+}
+
+delete {
+  url: http://localhost:8080/tickets/delete/3
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

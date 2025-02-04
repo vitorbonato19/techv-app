@@ -5,7 +5,19 @@ meta {
 }
 
 post {
-  url: 
-  body: none
-  auth: none
+  url: http://localhost:8080/tickets
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "requester": "Felipe",
+    "type": "PC_MAINTENCE",
+    "text": "my pc is not starint"
+  }
 }

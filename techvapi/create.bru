@@ -5,7 +5,17 @@ meta {
 }
 
 post {
-  url: 
-  body: none
+  url: http://localhost:8080/users
+  body: json
   auth: none
+}
+
+body:json {
+  {
+    "username": "admin",
+    "email": "admin@admin.com",
+    "password": "123",
+    "zipCode": "13082690",
+    "admin": true
+  }
 }
