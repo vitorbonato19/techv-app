@@ -1,5 +1,6 @@
 package com.techv.vitor.handler;
 
+import com.techv.vitor.exception.InvalidRequestException;
 import com.techv.vitor.exception.TicketNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +15,9 @@ import java.util.Map;
 @ControllerAdvice
 public class InvalidRequestExceptionHandler {
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    @ExceptionHandler(TicketNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> entityNotFound(TicketNotFoundException ex) {
+    @ExceptionHandler(InvalidRequestException.class)
+    public ResponseEntity<Map<String, Object>> entityNotFound(InvalidRequestException ex) {
 
         Map<String, Object> response = new HashMap<>();
         response.put("status", ex.getHttpStatus().value());

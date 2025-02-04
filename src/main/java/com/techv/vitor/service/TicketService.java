@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -35,12 +34,11 @@ public class TicketService {
         return ticketRepository.findAll();
     }
 
-    public Optional<Ticket> findById(Long id) {
-        var entity = ticketRepository.findById(id);
-        if (entity.isPresent()) {
-            return entity;
-        }
-        throw new TicketNotFoundException("Ticket not found...Verify the id... Id: " + id, HttpStatus.NOT_FOUND);
+    public Ticket findById(Long id) {
+        Optional<Ticket> entity = ticketRepository.findById(id);
+        return entity.orElseThrow(
+                () -> new TicketNotFoundException("Ticket not found...Verify the id... Id: " + id, HttpStatus.NOT_FOUND)
+        );
     }
 
     @Transactional
@@ -59,7 +57,7 @@ public class TicketService {
             return response;
 
         } catch (InvalidRequestException ex) {
-            throw new InvalidRequestException("during request something wrong happened ", HttpStatus.BAD_REQUEST);
+            throw new InvalidRequestException(ex.getMessage(), ex.getHttpStatus());
         }
     }
 
@@ -71,20 +69,20 @@ public class TicketService {
             var user = userService.findById(userId);
             var ticket = findById(ticketId);
 
-            if (Objects.equals(user.getId(), ticket.get().getId())) {
-                throw new InvalidRequestException("ticket alredy's have a analyst.", HttpStatus.CONFLICT);
+            if (ticket.getUsers() != null) {
+                throw new InvalidRequestException("ticket already's have a analyst.", HttpStatus.CONFLICT);
             }
 
-            ticket.get().setAnalyst(user.getUsername());
-            ticket.get().setUsers(user);
+            ticket.setAnalyst(user.getUsername());
+            ticket.setUsers(user);
 
-            ticketRepository.save(ticket.get());
-            var response = ticketMapper.toResponseDto(ticket.get());
+            ticketRepository.save(ticket);
+            var response = ticketMapper.toResponseDto(ticket);
 
             return response;
 
         } catch (InvalidRequestException ex) {
-            throw new InvalidRequestException("during request something wrong happened ", HttpStatus.BAD_REQUEST);
+            throw new InvalidRequestException(ex.getMessage(), ex.getHttpStatus());
         }
     }
 
