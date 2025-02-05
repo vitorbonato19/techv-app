@@ -8,6 +8,7 @@ import com.techv.vitor.entity.Cep;
 import com.techv.vitor.entity.Roles;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.exception.EntityNotFoundException;
+import com.techv.vitor.exception.InvalidRequestException;
 import com.techv.vitor.exception.PasswordOrUsernameException;
 import com.techv.vitor.mapper.UserMapper;
 import com.techv.vitor.repository.RoleRepository;
@@ -15,7 +16,9 @@ import com.techv.vitor.repository.SectorRepository;
 import com.techv.vitor.repository.TicketRepository;
 import com.techv.vitor.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -81,18 +84,14 @@ public class UserService {
         );
     }
 
-    public Cep getCep(String cep) {
+    public ResponseEntity<Cep> getCep(String cep) {
 
         RestTemplate restTemplate = new RestTemplate();
         var url = "https://opencep.com/v1/" + cep;
 
         ResponseEntity<Cep> response = restTemplate.getForEntity(url, Cep.class);
 
-        if (response.getStatusCode() == HttpStatus.OK) {
-            return response.getBody();
-        } else {
-            throw new BadCredentialsException("invalid zip code...verify you request...");
-        }
+        return ResponseEntity.status(response.getStatusCode()).build();
     }
 
     @Transactional
@@ -116,6 +115,12 @@ public class UserService {
                 user.setRoles(Set.of((roleRepository.findByName("ADMIN"))));
             } else {
                 user.setRoles(Set.of((roleRepository.findByName("NOT_ADMIN"))));
+            }
+
+            var body = getCep(requestDto.getZipCode());
+
+            if (body.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404))) {
+                throw new InvalidRequestException("invalid zip code", HttpStatus.NOT_FOUND);
             }
 
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));

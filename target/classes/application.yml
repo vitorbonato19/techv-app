@@ -11,8 +11,6 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
-  flyway:
-    repa
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
