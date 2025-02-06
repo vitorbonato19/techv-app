@@ -50,7 +50,6 @@ public class UserController {
         headers.setAccessControlAllowMethods(List.of(HttpMethod.GET));
         var headerData = data.convertToMap(headers);
         var response = new Data<>(clients, headerData);
-        log.info("HTTP METHOD GET OK!");
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
     }
 
@@ -66,19 +65,7 @@ public class UserController {
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
     }
 
-    @PostMapping("/auth/login")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Data<LoginResponse>> userLogin(@RequestBody LoginRequest loginRequest) {
-        var responseLogin = userService.login(loginRequest);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setDate(Instant.now());
-        headers.setAccessControlAllowMethods(List.of(HttpMethod.POST));
-        var headerData = data.convertToMap(headers);
-        var response = new Data<>(responseLogin, headerData);
-        return new ResponseEntity<>(response, headers, HttpStatus.OK);
-    }
-
-    @PostMapping
+    @PostMapping("/new")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Data<UserResponseDto>> insertUsers(@RequestBody UserRequestDto requestDto) {
         UserResponseDto dtoResponse = userService.insertUsers(requestDto);

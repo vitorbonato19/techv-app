@@ -4,9 +4,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import org.springframework.http.HttpStatus;
 
 
 public class Cep {
+
+    private HttpStatus status;
     private String cep;
     private String logradouro;
     private String complemento;
@@ -19,7 +22,8 @@ public class Cep {
 
     }
 
-    public Cep(String cep, String logradouro, String complemento, String bairro, String localidade, String uf, String ibge) {
+    public Cep(HttpStatus status, String cep, String logradouro, String complemento, String bairro, String localidade, String uf, String ibge) {
+        this.status = status;
         this.cep = cep;
         this.logradouro = logradouro;
         this.complemento = complemento;
@@ -27,6 +31,14 @@ public class Cep {
         this.localidade = localidade;
         this.uf = uf;
         this.ibge = ibge;
+    }
+
+    public HttpStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(HttpStatus status) {
+        this.status = status;
     }
 
     public String getCep() {

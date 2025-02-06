@@ -8,6 +8,7 @@ import com.techv.vitor.entity.Cep;
 import com.techv.vitor.entity.Roles;
 import com.techv.vitor.entity.User;
 import com.techv.vitor.exception.EntityNotFoundException;
+import com.techv.vitor.exception.InvalidRequestException;
 import com.techv.vitor.exception.PasswordOrUsernameException;
 import com.techv.vitor.mapper.UserMapper;
 import com.techv.vitor.repository.RoleRepository;
@@ -15,7 +16,9 @@ import com.techv.vitor.repository.SectorRepository;
 import com.techv.vitor.repository.TicketRepository;
 import com.techv.vitor.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -81,18 +84,14 @@ public class UserService {
         );
     }
 
-    public Cep getCep(String cep) {
+    public ResponseEntity<Cep> getCep(String cep) {
 
         RestTemplate restTemplate = new RestTemplate();
         var url = "https://opencep.com/v1/" + cep;
 
         ResponseEntity<Cep> response = restTemplate.getForEntity(url, Cep.class);
 
-        if (response.getStatusCode() == HttpStatus.OK) {
-            return response.getBody();
-        } else {
-            throw new BadCredentialsException("invalid zip code...verify you request...");
-        }
+        return ResponseEntity.status(response.getStatusCode()).build();
     }
 
     @Transactional
@@ -118,6 +117,12 @@ public class UserService {
                 user.setRoles(Set.of((roleRepository.findByName("NOT_ADMIN"))));
             }
 
+            var body = getCep(requestDto.getZipCode());
+
+            if (body.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404))) {
+                throw new InvalidRequestException("invalid zip code", HttpStatus.NOT_FOUND);
+            }
+
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
             userRepository.save(user);
@@ -132,43 +137,6 @@ public class UserService {
 
     }
 
-    @Transactional
-    public LoginResponse login(LoginRequest loginRequest) {
-
-        var user = userRepository.findByUsername(loginRequest.getUsername());
-
-        if (user.isEmpty() || !verifyLogin(loginRequest)) {
-            throw new EntityNotFoundException("Credenciais invalidas.", HttpStatus.FORBIDDEN);
-        }
-
-        var now = Instant.now();
-        var expire = 150L;
-
-        var auth  = user.get().getRoles().
-                stream()
-                .map(Roles::getName)
-                .collect(Collectors.joining(" "));
-
-        System.out.println(auth);
-
-        var claims = JwtClaimsSet.builder()
-                .issuer("api.java")
-                .subject(user.get().getId().toString())
-                .issuedAt(now)
-                .expiresAt(now.plusSeconds(expire))
-                .claim("auth", auth)
-                .build();
-
-        var jwt = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-
-        var response = new LoginResponse();
-
-        response.setAccessToken(jwt);
-        response.setExpiresIn(expire);
-        response.setCreatedAt(now);
-
-        return response;
-    }
 
 
     @Transactional
