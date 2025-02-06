@@ -43,28 +43,16 @@ public class UserService {
 
     private final RoleRepository roleRepository;
 
-    private final TicketRepository ticketRepository;
-
-    private final SectorRepository sectorRepository;
-
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    private final JwtEncoder jwtEncoder;
 
     private final UserMapper mapper;
 
-
     private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public UserService(UserRepository userRepository,
-                       RoleRepository roleRepository, TicketRepository ticketRepository,
-                       SectorRepository sectorRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtEncoder jwtEncoder, UserMapper mapper) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder, UserMapper mapper) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
-        this.ticketRepository = ticketRepository;
-        this.sectorRepository = sectorRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.jwtEncoder = jwtEncoder;
         this.mapper = mapper;
     }
 

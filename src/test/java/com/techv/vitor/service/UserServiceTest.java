@@ -15,22 +15,21 @@ import com.techv.vitor.repository.SectorRepository;
 import com.techv.vitor.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.convert.DataSizeUnit;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
 
@@ -67,26 +66,68 @@ class UserServiceTest {
     @Mock
     private SectorRepository sectorRepository;
 
-    @Test
-    @DisplayName("Should return a list of users")
-    void findAll() {
-        User user = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
-        Mockito.when(userService.findAll()).thenReturn(Collections.singletonList(new User()));
-        List<User> users = userService.findAll(token);
+    @Nested
+    class findAll {
 
-        Assertions.assertEquals(1, users.size());
+        @Test
+        @DisplayName("Should return a list of users")
+        void findAll() {
+            User mock = new User(null, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
+            Mockito.when(userService.findAll()).thenReturn(Collections.singletonList(new User()));
+            List<User> users = userService.findAll();
+
+            Assertions.assertNotNull(users);
+            Assertions.assertEquals(1, users.size());
+        }
+
+        @Test
+        @DisplayName("Should return empty when no one users in data base")
+        void shouldReturnEmtpy() {
+            Mockito.when(userService.findAll()).thenReturn(Collections.emptyList());
+            var response = userService.findAll();
+
+            var empty = new ArrayList<>();
+
+            Assertions.assertEquals(response, response);
+            Assertions.assertTrue(response.isEmpty());
+            Assertions.assertTrue(response.equals(empty));
+        }
+    }
+
+    @Nested
+    class findById {
+
+        @Test
+        @DisplayName("Should return an user by the id passed")
+        void findById() {
+
+            User user = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
+
+            Mockito.when(userRepository.save(user)).thenReturn(user);
+            Mockito.when(userService.findById(user.getId())).thenReturn(user);
+            var mock = userRepository.save(user);
+            User userResponse = userService.findById(user.getId());
+
+
+            Assertions.assertNotNull(userResponse);
+            Assertions.assertEquals(user, userResponse);
+            Assertions.assertEquals(user.getId(), userResponse.getId());
+            Assertions.assertEquals(user.getUsername(), userResponse.getUsername());
+            Assertions.assertEquals(user.getEmail(), userResponse.getEmail());
+            Assertions.assertEquals(user.getPassword(), userResponse.getPassword());
+            Assertions.assertEquals(user.getIntegrated(), userResponse.getIntegrated());
+            Assertions.assertEquals(user.getTickets(), userResponse.getTickets());
+        }
+
+        @Test
+        @DisplayName("Should do not return a user")
+        void shouldDoNotReturnUser() {
+
+        }
+
     }
 
 
-    @Test
-    @DisplayName("Should return an user by the id passed")
-    void findById() {
-        User user = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
-        Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        Optional<User> userResponse = userRepository.findById(user.getId());
-
-        Assertions.assertTrue(userResponse.isPresent());
-    }
 
 
     @Test
@@ -127,7 +168,8 @@ class UserServiceTest {
                 "Vitor",
                 "vitor@java.com",
                 "12345",
-                "13082690");
+                "13082690",
+                true);
 
         var user = new User();
         user.setId(1L);
@@ -168,7 +210,8 @@ class UserServiceTest {
                 null,
                 "vitor@java.com",
                 "12345",
-                "13082690");
+                "13082690",
+                true);
 
         var user = new User();
         user.setId(1L);
@@ -206,7 +249,7 @@ class UserServiceTest {
             return userSave;
         });
 
-        userService.updateUsers(newUser, oldUser.getId(), token);
+        userService.updateUsers(newUser, oldUser.getId());
         var responseNewUser = userRepository.findById(newUser.getId());
 
         Assertions.assertTrue(responseNewUser.isPresent());

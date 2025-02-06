@@ -28,10 +28,10 @@ public class AuthController {
 	
 	private final HttpHeaders headers;
 	
-	private final Data data;
+	private final Data<?> data;
 	
 
-    public AuthController(AuthService authService, HttpHeaders headers, Data data) {
+    public AuthController(AuthService authService, HttpHeaders headers, Data<?> data) {
 		this.authService = authService;
 		this.headers = headers;
 		this.data = data;
