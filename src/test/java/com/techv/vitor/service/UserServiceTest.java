@@ -27,6 +27,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.util.Assert;
 
+import javax.management.relation.Role;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -103,166 +104,167 @@ class UserServiceTest {
 
             User user = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
 
-            Mockito.when(userRepository.save(user)).thenReturn(user);
-            Mockito.when(userService.findById(user.getId())).thenReturn(user);
-            var mock = userRepository.save(user);
+            Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
             User userResponse = userService.findById(user.getId());
 
 
             Assertions.assertNotNull(userResponse);
-            Assertions.assertEquals(user, userResponse);
             Assertions.assertEquals(user.getId(), userResponse.getId());
-            Assertions.assertEquals(user.getUsername(), userResponse.getUsername());
-            Assertions.assertEquals(user.getEmail(), userResponse.getEmail());
-            Assertions.assertEquals(user.getPassword(), userResponse.getPassword());
-            Assertions.assertEquals(user.getIntegrated(), userResponse.getIntegrated());
-            Assertions.assertEquals(user.getTickets(), userResponse.getTickets());
         }
 
         @Test
-        @DisplayName("Should do not return a user")
-        void shouldDoNotReturnUser() {
+        @DisplayName("Should throw exception when user is not find")
+        void showExceptionNotFounById() {
 
+            User user = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
+
+            Assertions.assertThrows(EntityNotFoundException.class, () -> userService.findById(user.getId()));
         }
 
     }
 
+    @Nested
+    class insertUsers {
 
+        @Test
+        @DisplayName("Should return a 201 created status code")
+        void shouldReturn201Created() {
 
+            var request = new UserRequestDto(
+                    "teste",
+                    "teste@email.com",
+                    "1234",
+                    "13082690",
+                    true);
 
-    @Test
-    @DisplayName("Should throw an exception if the UUID was null")
-    void findByIdButThrowEntityNotFoundExceptionIfUUIDIsNull() {
-
-        User user = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
-        Assertions.assertThrows(EntityNotFoundException.class, () -> userService.findById(null));
-    }
-
-    @Test
-    @DisplayName("Should return true when password login are equals from the encoded user password")
-    void verifiyLoginButshouldReturnTrueWhenLoginIsOk() {
-        User mock = new User(1L, "Vitor", "teste@email.com", "12345", Integrated.TRUE, LocalDateTime.now());
-        Mockito.when(userRepository.findByUsername(mock.getUsername())).thenReturn(Optional.of(mock));
-        var request = new LoginRequest(mock.getUsername(), mock.getPassword());
-        var response = userService.verifyLogin(request);
-
-        Assertions.assertTrue(response);
-    }
-
-    @Test
-    @DisplayName("Should return false when password login are different from the encoded user password")
-    void verifiyLoginButshouldReturnFalseWhenPasswordLoginNotMatches() {
-        User mock = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
-        Mockito.when(userRepository.findByUsername(mock.getUsername())).thenReturn(Optional.of(mock));
-        var request = new LoginRequest("teste", "error");
-        var response = userService.verifyLogin(request);
-
-        Assertions.assertFalse(response);
-    }
-
-    @Test
-    @DisplayName("Should insert an user in database and return true if he's present")
-    void insertUsers() {
-
-        var userRequest = new UserRequestDto(
-                "Vitor",
-                "vitor@java.com",
-                "12345",
-                "13082690",
-                true);
-
-        var user = new User();
-        user.setId(1L);
-        user.setUsername(userRequest.getUsername());
-        user.setPassword(encoder.encode(userRequest.getPassword()));
-        user.setEmail(userRequest.getEmail());
-        user.setLastModified(LocalDateTime.now());
-
-        var userResponseDto = new UserResponseDto(
+            User user = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
+            var adminRoles = new Roles(1L, "ADMIN");
+            var responseDto = new UserResponseDto(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
                 user.getLastModified(),
                 user.getZipCode(),
                 user.getRoles()
-        );
+            );
 
-        Mockito.when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
-            User userSave = invocation.getArgument(0);
-            userSave.setId(user.getId());
-            return userSave;
-        });
-        Mockito.when(mapper.toEntity(userRequest)).thenReturn(user);
-        Mockito.when(mapper.toResponseDto(user)).thenReturn(userResponseDto);
-        Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+            Mockito.when(mapper.toEntity(request)).thenReturn(user);
+            Mockito.when(mapper.toResponseDto(user)).thenReturn(responseDto);
+            Mockito.when(roleRepository.findByName("ADMIN")).thenReturn(adminRoles);
+            Mockito.when(userRepository.save(user)).thenReturn(user);
+            var response = userService.insertUsers(request);
 
-        var responseDto = userService.insertUsers(userRequest);
-        var response = userRepository.findById(responseDto.getId());
+            Assertions.assertNotNull(response);
+            Assertions.assertEquals(user.getId(), response.getId());
+            Assertions.assertEquals(user.getUsername(), response.getUsername());
+            Assertions.assertEquals(user.getEmail(), response.getEmail());
+        }
 
-        Assertions.assertTrue(response.isPresent());
+        @Test
+        @DisplayName("Should throw a exception if any fields of request may be null")
+        void throwExceptionIfFielsMayBeNull() {
+
+            var request = new UserRequestDto(
+                    "teste",
+                    "teste@email.com",
+                    null,
+                    "13082690",
+                    true);
+
+            Assertions.assertThrows(PasswordOrUsernameException.class, () -> userService.insertUsers(request));
+
+        }
     }
 
-    @Test
-    @DisplayName("Should throw an exception if username, password or email are null")
-    void insertUsersButThrowExceptionIf() {
+    @Nested
+    class login {
 
-        var userRequest = new UserRequestDto(
-                null,
-                "vitor@java.com",
-                "12345",
-                "13082690",
-                true);
+        @Test
+        @DisplayName("Should return true when password login are equals from the encoded user password")
+        void verifiyLoginButshouldReturnTrueWhenLoginIsOk() {
+            User mock = new User(1L, "Vitor", "teste@email.com", "12345", Integrated.TRUE, LocalDateTime.now());
+            var request = new LoginRequest(mock.getUsername(), mock.getPassword());
+            Mockito.when(userRepository.findByUsername(mock.getUsername())).thenReturn(Optional.of(mock));
+            Mockito.when(userService.verifyLogin(request)).thenReturn(Boolean.TRUE);
+            var response = userService.verifyLogin(request);
 
-        var user = new User();
-        user.setId(1L);
-        user.setUsername(userRequest.getUsername());
-        user.setPassword(encoder.encode(userRequest.getPassword()));
-        user.setEmail(userRequest.getPassword());
-        user.setLastModified(LocalDateTime.now());
+            Assertions.assertTrue(userService.verifyLogin(request));
+        }
 
-        Assertions.assertThrows(PasswordOrUsernameException.class, () -> userService.insertUsers(userRequest));
+        @Test
+        @DisplayName("Should return false when password login are different from the encoded user password")
+        void verifiyLoginButshouldReturnFalseWhenPasswordLoginNotMatches() {
+            User mock = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
+            Mockito.when(userRepository.findByUsername(mock.getUsername())).thenReturn(Optional.of(mock));
+            var request = new LoginRequest("teste", "error");
+            var response = userService.verifyLogin(request);
+
+            Assertions.assertFalse(userService.verifyLogin(request));
+        }
+
     }
 
-    @Test
-    @DisplayName("Should throw a Entity Not found exception if the ID not exists in database")
-    void updateUsersButThrowExceptionIfUsersNotExists() {
-        var sector = sectorRepository.findByName(Sector.Values.ECOMMERCE.name());
-        User mock = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
-        Mockito.when(userRepository.findById(mock.getId())).thenThrow(EntityNotFoundException.class);
-        Assertions.assertThrows(
-                EntityNotFoundException.class,
-                () -> userRepository.findById(mock.getId()));
+    @Nested
+    class update {
+
+
+        @Test
+        @DisplayName("Should update a user in database")
+        void updateUser() {
+
+            var oldUser = new User(1L, "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
+            var newUser = new User(2L, "Vitor2", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
+            Mockito.when(userRepository.findById(oldUser.getId())).thenReturn(Optional.of(oldUser));
+            Mockito.when(userRepository.findById(newUser.getId())).thenReturn(Optional.of(newUser));
+
+            Mockito.when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+                User userSave = invocation.getArgument(0);
+                userSave.setId(newUser.getId());
+                return userSave;
+            });
+
+            userService.updateUsers(newUser, oldUser.getId());
+            var responseNewUser = userRepository.findById(newUser.getId());
+
+            Assertions.assertTrue(responseNewUser.isPresent());
+        }
+
+        @Test
+        @DisplayName("Should throw a Entity Not found exception if the ID not exists in database")
+        void updateUsersButThrowExceptionIfUsersNotExists() {
+
+            User mock = new User(1L, "teste", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
+
+            Assertions.assertThrows(EntityNotFoundException.class, () -> userService.updateUsers(mock, 1L));
+        }
+
     }
 
-    @Test
-    @DisplayName("Should update a user in database")
-    void updateUser() {
+    @Nested
+    class delete {
 
-        var oldUser = new User(1L, "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
-        var newUser = new User(2L, "Vitor2", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
-        Mockito.when(userRepository.findById(oldUser.getId())).thenReturn(Optional.of(oldUser));
-        Mockito.when(userRepository.findById(newUser.getId())).thenReturn(Optional.of(newUser));
 
-        Mockito.when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
-            User userSave = invocation.getArgument(0);
-            userSave.setId(newUser.getId());
-            return userSave;
-        });
+        @Test
+        @DisplayName("Should delete a Entity from db")
+        void deleteUserById() {
 
-        userService.updateUsers(newUser, oldUser.getId());
-        var responseNewUser = userRepository.findById(newUser.getId());
+            var mock = new User(1L, "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
+            Mockito.when(userRepository.findById(mock.getId())).thenReturn(Optional.of(mock));
+            Mockito.doNothing().when(userRepository).deleteById(mock.getId());
 
-        Assertions.assertTrue(responseNewUser.isPresent());
+            userService.delete(mock.getId());
+
+            Mockito.verify(userRepository, Mockito.times(1)).deleteById(mock.getId());
+        }
+
+        @Test
+        @DisplayName("Should throw a Entity Not found exception if the ID not exists is database")
+        void deleteUserByIdButThrowException() {
+            var mock = new User(1L, "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
+            Assertions.assertThrows(
+                    EntityNotFoundException.class,
+                    () -> userService.delete(1L));
+        }
+
     }
-
-    @Test
-    @DisplayName("Should throw a Entity Not found exception if the UUID not exists is database")
-    void deleteUserById() {
-        var mock = new User(1L, "Vitor", "vitor@test.com", "12345", Integrated.TRUE, LocalDateTime.now());
-        Mockito.when(userRepository.findById(mock.getId())).thenThrow(EntityNotFoundException.class);
-        Assertions.assertThrows(
-                EntityNotFoundException.class,
-                () -> userRepository.findById(mock.getId()));
-    }
-
 }

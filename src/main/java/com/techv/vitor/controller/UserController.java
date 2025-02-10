@@ -92,7 +92,7 @@ public class UserController {
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Data<String>> deleteUserById(@RequestHeader("Authorization") String token, @PathVariable Long id) {
-        userService.disable(id);
+        userService.delete(id);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setDate(Instant.now());
         headers.setAccessControlAllowMethods(List.of(HttpMethod.DELETE));
