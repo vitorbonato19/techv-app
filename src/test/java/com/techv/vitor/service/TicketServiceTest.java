@@ -1,6 +1,10 @@
 package com.techv.vitor.service;
 
+import com.techv.vitor.controller.dto.TicketRequestDto;
+import com.techv.vitor.controller.dto.TicketResponseDto;
 import com.techv.vitor.entity.Ticket;
+import com.techv.vitor.entity.enums.TypeTicket;
+import com.techv.vitor.exception.InvalidRequestException;
 import com.techv.vitor.exception.TicketNotFoundException;
 import com.techv.vitor.mapper.TicketMapper;
 import com.techv.vitor.repository.TicketRepository;
@@ -117,5 +121,95 @@ class TicketServiceTest {
             }
         }
 
+        @Nested
+        class createTicket {
+
+            @Test
+            @DisplayName("Should create a ticket and return response dto with data")
+            void shouldCreateATicket() {
+
+                var request = new TicketRequestDto(
+                        "Vitor",
+                        TypeTicket.FEATURE,
+                        "text2test"
+                );
+
+
+                var mock = new Ticket.TicketBuilder()
+                        .id(1L)
+                        .analyst("vitor")
+                        .requester(request.getRequester())
+                        .text(request.getText())
+                        .reply("null")
+                        .type(request.getType())
+                        .build();
+
+                var responseDto = new TicketResponseDto(
+                        mock.getId(),
+                        mock.getRequester(),
+                        mock.getText(),
+                        mock.getType(),
+                        mock.getCreatedAt(),
+                        mock.isFinished()
+                );
+
+                Mockito.when(ticketMapper.toEntity(request)).thenReturn(mock);
+                Mockito.when(ticketMapper.toResponseDto(mock)).thenReturn(responseDto);
+                Mockito.when(ticketRepository.save(mock)).thenReturn(mock);
+
+                var response = ticketService.createTicket(request);
+
+                Assertions.assertAll(
+
+                        () -> Assertions.assertNotNull(response),
+                        () -> Assertions.assertEquals(response.getId(), mock.getId()),
+                        () -> Assertions.assertEquals(response.getRequester(), mock.getRequester()),
+                        () -> Assertions.assertEquals(response.getText(), mock.getText()),
+                        () -> Assertions.assertEquals(response.getType(), mock.getType())
+                );
+
+                Mockito.verify(ticketRepository, Mockito.times(1)).save(Mockito.eq(mock));
+            }
+
+            @Test
+            @DisplayName("Should throw a entity if requester fields from request may be null")
+            void shouldThrowAExceptionIfRequesterFieldsMayBeNull() {
+
+                var request = new TicketRequestDto(
+                        null,
+                        TypeTicket.FEATURE,
+                        "text2test"
+                );
+
+                Assertions.assertThrows(InvalidRequestException.class, () -> ticketService.createTicket(request));
+            }
+
+            @Test
+            @DisplayName("Should throw a entity if text field from request may be null")
+            void shouldThrowAExceptionIfTextFieldsMayBeNull() {
+
+                var request = new TicketRequestDto(
+                        "Vitor",
+                        TypeTicket.FEATURE,
+                        null
+                );
+
+                Assertions.assertThrows(InvalidRequestException.class, () -> ticketService.createTicket(request));
+            }
+
+
+            @Test
+            @DisplayName("Should throw a entity if type field from request may be null")
+            void shouldThrowAExceptionIfTypeFieldMayBeNull() {
+
+                var request = new TicketRequestDto(
+                        "Vitor",
+                        null,
+                        "text2test"
+                );
+
+                Assertions.assertThrows(InvalidRequestException.class, () -> ticketService.createTicket(request));
+            }
+        }
     }
 }
