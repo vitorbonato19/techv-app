@@ -46,7 +46,11 @@ public class TicketService {
 
         try {
 
-            if (requestDto.getRequester() == null || requestDto.getRequester().equalsIgnoreCase(" ")) {
+            if (requestDto.getRequester() == null
+                    || requestDto.getRequester().equalsIgnoreCase(" ")
+                    || requestDto.getText() == null
+                    || requestDto.getText().isEmpty()
+                    || requestDto.getType() == null) {
                 throw new InvalidRequestException("requester field cant be null", HttpStatus.BAD_REQUEST);
             }
 
