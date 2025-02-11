@@ -8,6 +8,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,9 +18,9 @@ public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Nonnull
+    @NotNull
     private String requester;
-    @Nonnull
+    @NotNull
     private String analyst;
     @Column(columnDefinition = "TEXT")
     private String text;
@@ -60,11 +61,17 @@ public class Ticket {
 
     public static class TicketBuilder {
 
+        private Long id;
         private String requester;
         private String analyst;
         private String text;
         private String reply;
         private TypeTicket type;
+
+        public TicketBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
 
         public TicketBuilder requester(String requester) {
             this.requester = requester;
@@ -98,6 +105,7 @@ public class Ticket {
     }
 
     private Ticket(TicketBuilder builder) {
+        this.id = id;
         this.requester = builder.requester;
         this.analyst = builder.analyst;
         this.text = builder.text;
