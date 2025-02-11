@@ -58,6 +58,53 @@ public class Ticket {
         this.users = users;
     }
 
+    public static class TicketBuilder {
+
+        private String requester;
+        private String analyst;
+        private String text;
+        private String reply;
+        private TypeTicket type;
+
+        public TicketBuilder requester(String requester) {
+            this.requester = requester;
+            return this;
+        }
+
+        public TicketBuilder analyst(String analyst) {
+            this.analyst = analyst;
+            return this;
+        }
+
+        public TicketBuilder text(String text) {
+            this.text = text;
+            return this;
+        }
+
+        public TicketBuilder reply(String reply) {
+            this.reply = reply;
+            return this;
+        }
+
+        public TicketBuilder type(TypeTicket type) {
+            this.type = type;
+            return this;
+        }
+
+        public Ticket build() {
+            return new Ticket();
+        }
+
+    }
+
+    private Ticket(TicketBuilder builder) {
+        this.requester = builder.requester;
+        this.analyst = builder.analyst;
+        this.text = builder.text;
+        this.reply = builder.reply;
+        this.type = builder.type;
+    }
+
     public Long getId() {
         return id;
     }
@@ -138,4 +185,6 @@ public class Ticket {
     public void setUsers(User users) {
         this.users = users;
     }
+
+
 }
