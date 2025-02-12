@@ -3,11 +3,14 @@ package com.techv.vitor.service;
 import com.techv.vitor.controller.dto.TicketRequestDto;
 import com.techv.vitor.controller.dto.TicketResponseDto;
 import com.techv.vitor.entity.Ticket;
+import com.techv.vitor.entity.User;
+import com.techv.vitor.entity.enums.Integrated;
 import com.techv.vitor.entity.enums.TypeTicket;
 import com.techv.vitor.exception.InvalidRequestException;
 import com.techv.vitor.exception.TicketNotFoundException;
 import com.techv.vitor.mapper.TicketMapper;
 import com.techv.vitor.repository.TicketRepository;
+import com.techv.vitor.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,6 +21,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.swing.text.html.Option;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +42,9 @@ class TicketServiceTest {
 
     @InjectMocks
     private TicketService ticketService;
+
+    @Mock
+    private UserRepository userRepository;
 
     @Nested
     class findAll {
@@ -209,6 +217,46 @@ class TicketServiceTest {
                 );
 
                 Assertions.assertThrows(InvalidRequestException.class, () -> ticketService.createTicket(request));
+            }
+        }
+
+        @Nested
+        class agreeTicket {
+
+            @Test
+            @DisplayName("Should update the user ticket by an id on path params")
+            void shouldUpdateATicketUser() {
+
+                var ticket = new Ticket.TicketBuilder()
+                        .id(1L)
+                        .text("text2test")
+                        .type(TypeTicket.FEATURE)
+                        .requester("Jose")
+                        .build();
+
+
+                var ticketResponseDto = new TicketResponseDto(
+                        ticket.getId(),
+                        ticket.getRequester(),
+                        ticket.getText(),
+                        ticket.getType(),
+                        ticket.getCreatedAt(),
+                        ticket.isFinished()
+                );
+
+                var user = new User(1L, "Vitor", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
+
+                Mockito.when(ticketRepository.save(ticket)).thenReturn(ticket);
+                Mockito.when(ticketMapper.toResponseDto(ticket)).thenReturn(ticketResponseDto);
+                Mockito.when(ticketRepository.findById(ticket.getId())).thenReturn(Optional.of(ticket));
+                Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+                var data = ticketService.agreeTicket(user.getId(), ticket.getId());
+
+                Assertions.assertAll(
+
+                        () -> Assertions.assertNotNull(data)
+                );
             }
         }
     }
