@@ -59,6 +59,15 @@ public class Ticket {
         this.users = users;
     }
 
+    private Ticket(TicketBuilder builder) {
+        this.id = builder.id;
+        this.requester = builder.requester;
+        this.analyst = builder.analyst;
+        this.text = builder.text;
+        this.reply = builder.reply;
+        this.type = builder.type;
+    }
+
     public static class TicketBuilder {
 
         private Long id;
@@ -99,18 +108,9 @@ public class Ticket {
         }
 
         public Ticket build() {
-            return new Ticket();
+            return new Ticket(this);
         }
 
-    }
-
-    private Ticket(TicketBuilder builder) {
-        this.id = id;
-        this.requester = builder.requester;
-        this.analyst = builder.analyst;
-        this.text = builder.text;
-        this.reply = builder.reply;
-        this.type = builder.type;
     }
 
     public Long getId() {

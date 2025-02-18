@@ -227,35 +227,35 @@ class TicketServiceTest {
             @DisplayName("Should update the user ticket by an id on path params")
             void shouldUpdateATicketUser() {
 
-                var ticket = new Ticket.TicketBuilder()
+                var mock = new Ticket.TicketBuilder()
                         .id(1L)
+                        .requester("Vitor")
                         .text("text2test")
-                        .type(TypeTicket.FEATURE)
-                        .requester("Jose")
+                        .reply("null")
+                        .type(TypeTicket.ANOTHER)
                         .build();
 
-
                 var ticketResponseDto = new TicketResponseDto(
-                        ticket.getId(),
-                        ticket.getRequester(),
-                        ticket.getText(),
-                        ticket.getType(),
-                        ticket.getCreatedAt(),
-                        ticket.isFinished()
+                        mock.getId(),
+                        mock.getRequester(),
+                        mock.getText(),
+                        mock.getType(),
+                        mock.getCreatedAt(),
+                        mock.isFinished()
                 );
 
                 var user = new User(1L, "Vitor", "teste@email.com", "1234", Integrated.TRUE, LocalDateTime.now());
 
-                Mockito.when(ticketRepository.save(ticket)).thenReturn(ticket);
-                Mockito.when(ticketMapper.toResponseDto(ticket)).thenReturn(ticketResponseDto);
-                Mockito.when(ticketRepository.findById(ticket.getId())).thenReturn(Optional.of(ticket));
-                Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+                Mockito.when(ticketRepository.save(mock)).thenReturn(mock);
+                Mockito.when(ticketMapper.toResponseDto(mock)).thenReturn(ticketResponseDto);
+                Mockito.when(ticketRepository.findById(mock.getId())).thenReturn(Optional.of(mock));
+                Mockito.when(userService.findById(user.getId())).thenReturn(user);
 
-                var data = ticketService.agreeTicket(user.getId(), ticket.getId());
+                var data = ticketService.agreeTicket(user.getId(), mock.getId());
 
                 Assertions.assertAll(
 
-                        () -> Assertions.assertNotNull(data)
+                        () -> Assertions.assertNotNull(data)    
                 );
             }
         }

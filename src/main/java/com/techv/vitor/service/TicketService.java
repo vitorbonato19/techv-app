@@ -66,12 +66,12 @@ public class TicketService {
     }
 
     @Transactional
-    public TicketResponseDto agreeTicket(Long userId, Long ticketId) {
+    public TicketResponseDto agreeTicket(Long id_user, Long id_ticket) {
 
         try {
 
-            var user = userService.findById(userId);
-            var ticket = findById(ticketId);
+            var user = userService.findById(id_user);
+            var ticket = findById(id_ticket);
 
             if (ticket.getUsers() != null) {
                 throw new InvalidRequestException("ticket already's have a analyst.", HttpStatus.CONFLICT);
